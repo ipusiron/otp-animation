@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTP Animation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>OTP Animation 🔥</h1>
+
+    <div class="input-section">
+	<div class="input-section">
+	<label for="plaintext">平文（テキスト）:</label>
+	<input id="plaintext" type="text" value="HELLO" />
+	<div id="errorMessage" class="error-message"></div>
+	<button id="generateKey">🔑 鍵を生成</button>
+	<button id="startAnimation">▶ 暗号化開始</button>
+	</div>
+
+    <div class="bit-display">
+      <div class="bit-row" id="plaintextBits">
+        <h2>平文ビット</h2>
+        <div class="bit-container" id="plaintextBitsContainer"></div>
+      </div>
+      <div class="bit-row" id="keyBits">
+        <h2>鍵ビット</h2>
+        <div class="bit-container" id="keyBitsContainer"></div>
+      </div>
+      <div class="bit-row" id="cipherBits">
+        <h2>暗号ビット</h2>
+        <div class="bit-container" id="cipherBitsContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer">
+      🔗 GitHubリポジトリはこちら（ <a href="https://github.com/ipusiron/otp-animation" target="_blank">ipusiron/otp-animation</a> ）
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
