@@ -15,24 +15,27 @@ Since this is a static site with no build process:
 
 ## Architecture
 
-The application consists of three core files:
+The application uses a modular JavaScript architecture with separate files for different concerns:
 
 1. **index.html**: UI structure with Japanese interface
-   - Input field for plaintext (ASCII only)
-   - Buttons for key generation and animation start
-   - Three rows displaying bits: plaintext, key, and ciphertext
+   - Tabbed interface: 暗号化, 復号, XORの基礎, OTP実験室
+   - Input fields for plaintext/ciphertext (ASCII only)
+   - Animation control panels with play/pause, step controls, speed adjustment
+   - Three rows displaying bits: plaintext/ciphertext, key, and output
 
-2. **script.js**: Core encryption logic and animation control
-   - `textToBitsWithValidation()`: Converts text to bit array with ASCII validation (32-126)
-   - `generateRandomBits()`: Creates random key bits
-   - `xorBits()`: Performs XOR encryption
-   - `animateEncryption()`: Manages the bit-by-bit animation sequence
-   - Global state: `plainBits`, `keyBits`, `cipherBits`
+2. **JavaScript modules**:
+   - `js/utils.js`: Core utility functions (bit conversion, XOR operations)
+   - `js/bit-operations.js`: Bit rendering and display functions
+   - `js/tab-manager.js`: Tab switching functionality
+   - `js/encryption.js`: Encryption animation logic and controls
+   - `js/decryption.js`: Decryption animation logic and controls
+   - `js/main.js`: Initialization and global coordination
 
 3. **style.css**: Visual styling including:
    - Burn animation for consumed key bits
    - 8-bit grouping for readability
-   - Responsive layout
+   - Responsive layout (1-5 character groups per line)
+   - Animation control styling
 
 ## Key Implementation Details
 

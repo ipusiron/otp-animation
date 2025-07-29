@@ -122,7 +122,7 @@ otp-animation/
 この2人のアイディアを組み合わせることで、平文ビット列を使い捨てのランダムビット列でXOR演算する暗号が誕生します。
 これこそが、現代のワンタイムパッドそのものになります。
 
-バーナム暗号（Vernam Cipher）はワンタイムパッドの前身に過ぎません。
+バーナム暗号はワンタイムパッドの前身に過ぎません。
 つまり、厳密には **「ワンタイムパッド≠バーナム暗号」** になります。
 
 実際に暗号理論やセキュリティ技術文献では、ワンタイムパッドが標準的な名称になります。
@@ -180,6 +180,101 @@ otp-animation/
     - ヴィジュネル暗号の「鍵キーワード長を平文長」かつ「鍵キーワードがランダム」であれば、ワンタイムパッドになる。
 - [『安全な暗号をどう実装するか 暗号技術の新設計思想』](https://book.mynavi.jp/ec/products/detail/id=147364) P.10-13
     - なぜワンタイムパッドは安全なのか
+
+---
+
+## 🔧 技術的詳細・制限事項
+
+### クリップボードAPI制限とフォールバック戦略
+
+本ツールではビット列のコピー・ペースト機能を提供していますが、ブラウザーのセキュリティ制限により、**連続的なクリップボードアクセスには制限があります**。
+
+#### 問題の背景
+
+現代のブラウザー（Chrome、Firefox、Safari等）では、セキュリティ上の理由からClipboard APIの使用に以下の制限があります：
+
+1. **ユーザーインタラクション要求**: クリップボードアクセスには明示的なユーザーアクション（クリック等）が必要
+2. **連続アクセス制限**: 短時間での複数回のクリップボードアクセスが制限される場合がある
+3. **タイムアウト**: 特定の条件下でAPIが応答しなくなる場合がある
+
+#### 実装した回避策
+
+この問題に対応するため、以下のフォールバック戦略を実装しています：
+
+```javascript
+// タイムアウト付きクリップボード読み取り
+async function pasteFromClipboard(successCallback, errorCallback) {
+  console.log('Starting clipboard read...');
+  
+  // Clipboard API利用可能性チェック
+  if (!navigator.clipboard || !navigator.clipboard.readText) {
+    fallbackPaste(successCallback, errorCallback);
+    return;
+  }
+  
+  try {
+    // 2秒タイムアウトでクリップボード読み取り
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Clipboard read timeout')), 2000);
+    });
+    
+    const text = await Promise.race([
+      navigator.clipboard.readText(),
+      timeoutPromise
+    ]);
+    
+    // 成功時の処理
+    const bitArray = parseBitString(text);
+    successCallback(bitArray, text);
+  } catch (err) {
+    // 失敗時は手動入力フォールバック
+    fallbackPaste(successCallback, errorCallback);
+  }
+}
+
+// フォールバック: 手動入力ダイアログ
+function fallbackPaste(successCallback, errorCallback) {
+  const text = prompt('ビット列を入力してください（アンダースコア区切り、空白区切り、区切りなしに対応）:');
+  if (text !== null && text.trim() !== '') {
+    try {
+      const bitArray = parseBitString(text);
+      successCallback(bitArray, text);
+    } catch (parseErr) {
+      errorCallback(parseErr.message);
+    }
+  } else {
+    errorCallback('入力がキャンセルされました');
+  }
+}
+```
+
+#### 回避アプローチの特徴
+
+1. **Promise.race()**: クリップボード読み取りとタイムアウトを競争させることで、ハングアップを防止
+2. **自動フォールバック**: クリップボードアクセスが失敗した場合、自動的に手動入力ダイアログを表示
+3. **複数形式対応**: アンダースコア区切り、空白区切り、区切りなしのすべてに対応した柔軟なパーサー
+4. **ユーザビリティ重視**: エラー時も操作を継続できるシームレスな体験
+
+#### 使用時の注意点
+
+- **初回ペースト**: 通常は正常に動作します
+- **2回目以降**: ブラウザー制限により手動入力ダイアログが表示される場合があります
+- **対処法**: ダイアログにクリップボードからビット列を貼り付けてください
+
+この実装により、ブラウザーの制限下でも安定した操作性を確保しています。
+
+### 対応ビット列形式
+
+```javascript
+// サポートする入力形式
+const examples = [
+  "01001000_01000101_01001100_01001100_01001111",  // アンダースコア区切り
+  "01001000 01000101 01001100 01001100 01001111",  // 空白区切り
+  "0100100001000101010011000100110001001111",      // 区切りなし
+  "01001000-01000101-01001100-01001100-01001111",  // ハイフン区切り
+  "01001000,01000101,01001100,01001100,01001111"   // カンマ区切り
+];
+```
 
 ---
 

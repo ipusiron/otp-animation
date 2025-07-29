@@ -12,7 +12,7 @@ h1 {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: auto;
 }
 
@@ -22,10 +22,16 @@ h1 {
   margin-bottom: 2rem;
 }
 
+.input-section label {
+  cursor: help;
+  border-bottom: 1px dotted #666;
+}
+
 .input-section input {
   font-size: 1rem;
   padding: 0.4rem;
-  width: 200px;
+  width: 400px;
+  max-width: 90%;
 }
 
 .input-section button {
@@ -35,6 +41,28 @@ h1 {
   cursor: pointer;
 }
 
+.input-section button:disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.copy-btn {
+  display: block;
+  margin: 0 auto 1rem auto;
+  background: #f0f8ff;
+  border: 2px solid #4a90e2;
+  color: #4a90e2;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: #4a90e2;
+  color: white;
+}
+
 /* ビット列の表示 */
 .bit-display {
   display: flex;
@@ -42,20 +70,64 @@ h1 {
   gap: 1rem;
 }
 
+.bit-row-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
 .bit-row h2 {
-  margin: 0.5rem 0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.bit-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.copy-bit-btn, .paste-bit-btn {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-bit-btn:hover, .paste-bit-btn:hover {
+  background: #e8e8e8;
+  border-color: #999;
+}
+
+.copy-bit-btn:active, .paste-bit-btn:active {
+  transform: translateY(1px);
+}
+
+.paste-bit-btn {
+  background: #fff8e1;
+  border-color: #ffb74d;
+  color: #e65100;
+}
+
+.paste-bit-btn:hover {
+  background: #ffecb3;
+  border-color: #ff9800;
 }
 
 .bit-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.8rem;
+  gap: 1.2rem;
 }
 
 /* 8ビットのグループ */
 .bit-group {
   display: inline-flex;
   gap: 0.4rem;
+  flex-shrink: 0;
 }
 
 .bit {
@@ -85,6 +157,24 @@ h1 {
   background: #d8ffd6;
 }
 
+/* アクティブ（処理中）のビット - 平文用 */
+.bit.plain.active {
+  animation: strongPulseAnim 0.5s ease-out;
+  box-shadow: 0 0 20px rgba(0, 150, 255, 1), 0 0 40px rgba(0, 150, 255, 0.6);
+  border-color: #0096ff;
+  border-width: 3px;
+  background: #a0d8ff;
+  transform: scale(1.15);
+}
+
+/* アクティブ（処理中）のビット - 鍵用 */
+.bit.key.active {
+  animation: pulseAnim 0.3s ease-out;
+  box-shadow: 0 0 15px rgba(255, 102, 0, 0.8);
+  border-color: #ff6600;
+  border-width: 2px;
+}
+
 /* 🔥 アニメーション：鍵ビットが使われると「燃える」 */
 .bit.burn {
   animation: burnAnim 0.6s ease-out forwards;
@@ -101,6 +191,9 @@ h1 {
 /* ✨ アニメーション：暗号ビットが現れる */
 .bit.appear {
   animation: appearAnim 0.3s ease-out;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+  border-color: #00ff00;
+  border-width: 2px;
 }
 
 /* キーフレーム定義 */
@@ -134,11 +227,131 @@ h1 {
   }
 }
 
+@keyframes pulseAnim {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes strongPulseAnim {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
 /* エラーメッセージ */
 .error-message {
   color: red;
   font-size: 0.9rem;
   margin-top: 0.3rem;
+}
+
+/* アニメーションコントロール */
+.animation-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.control-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.control-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background: #f0f0f0;
+  border-color: #999;
+}
+
+.control-btn:active {
+  transform: translateY(1px);
+}
+
+.control-btn:disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+  border-color: #ddd;
+}
+
+.control-btn:disabled:hover {
+  background-color: #f0f0f0;
+  color: #999;
+  border-color: #ddd;
+  transform: none;
+}
+
+.reset-btn {
+  background: #ffe6e6;
+  border-color: #ffb3b3;
+  color: #cc0000;
+}
+
+.reset-btn:hover {
+  background: #ffb3b3;
+  color: white;
+}
+
+.complete-btn {
+  background: #e6ffe6;
+  border-color: #b3ffb3;
+  color: #006600;
+}
+
+.complete-btn:hover {
+  background: #b3ffb3;
+  color: white;
+}
+
+.speed-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-right: 0.5rem;
+}
+
+.speed-select {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+}
+
+.progress-indicator {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #666;
+  margin-left: 1rem;
 }
 
 /* プレースホルダビット */
@@ -191,10 +404,98 @@ h1 {
   display: block;
 }
 
+/* トースト通知 */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  background: #333;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.success {
+  background: #4caf50;
+}
+
+.toast.error {
+  background: #f44336;
+}
+
 /* フッター */
 footer {
   margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
   text-align: center;
   font-size: 0.9rem;
   color: #777;
+}
+
+/* レスポンシブ対応 */
+/* 5文字分（実際の必要幅: 約1361px） */
+@media (min-width: 1400px) {
+  .bit-container {
+    justify-content: flex-start;
+  }
+}
+
+/* 4文字分 */
+@media (max-width: 1399px) and (min-width: 1100px) {
+  .container {
+    max-width: 1100px;
+  }
+}
+
+/* 3文字分 */
+@media (max-width: 1099px) and (min-width: 850px) {
+  .container {
+    max-width: 850px;
+  }
+}
+
+/* 2文字分 */
+@media (max-width: 849px) and (min-width: 600px) {
+  .container {
+    max-width: 600px;
+  }
+  .bit-container {
+    gap: 0.8rem;
+  }
+}
+
+/* 1文字分 */
+@media (max-width: 599px) {
+  .container {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  .bit-container {
+    gap: 0.6rem;
+    justify-content: center;
+  }
+}
+
+/* 極小画面（1文字分も収まらない場合）：横スクロール対応 */
+@media (max-width: 280px) {
+  .bit-display {
+    overflow-x: auto;
+  }
+  .bit-container {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
 }

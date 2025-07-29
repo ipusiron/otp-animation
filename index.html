@@ -21,24 +21,60 @@
       <!-- 暗号化タブ -->
       <div id="encrypt-tab" class="tab-panel active">
         <div class="input-section">
-          <label for="plaintext">平文（テキスト）:</label>
+          <label for="plaintext" title="入力されたテキストはASCIIコード（2進数）に変換されます">平文（テキスト）:</label>
           <input id="plaintext" type="text" value="HELLO" />
           <div id="errorMessage" class="error-message"></div>
           <button id="generateKey">🔑 鍵を生成</button>
           <button id="startAnimation">▶ 暗号化開始</button>
         </div>
+        
+        <div class="animation-controls" id="encryptAnimationControls" style="display: none;">
+          <div class="control-group">
+            <button id="encryptReset" class="control-btn reset-btn">🔄 リセット</button>
+            <button id="encryptStepBack" class="control-btn">⏮ 1つ戻る</button>
+            <button id="encryptPlayPause" class="control-btn">⏸ 一時停止</button>
+            <button id="encryptStepForward" class="control-btn">⏭ 1つ進む</button>
+            <button id="encryptComplete" class="control-btn complete-btn">⏩ 全処理</button>
+          </div>
+          <div class="control-group">
+            <label for="encryptSpeed" class="speed-label">速度:</label>
+            <select id="encryptSpeed" class="speed-select">
+              <option value="100">超高速 (0.1秒)</option>
+              <option value="300" selected>高速 (0.3秒)</option>
+              <option value="600">標準 (0.6秒)</option>
+              <option value="1000">低速 (1秒)</option>
+              <option value="2000">極低速 (2秒)</option>
+            </select>
+            <span class="progress-indicator" id="encryptProgress">0 / 0</span>
+          </div>
+        </div>
 
         <div class="bit-display">
           <div class="bit-row" id="plaintextBits">
-            <h2>平文ビット</h2>
+            <div class="bit-row-header">
+              <h2>平文ビット</h2>
+              <div class="bit-buttons">
+                <button class="copy-bit-btn" id="copyPlaintextBits" title="平文ビット列をコピー">📋</button>
+                <button class="paste-bit-btn" id="pastePlaintextBits" title="平文ビット列をペースト">📄</button>
+              </div>
+            </div>
             <div class="bit-container" id="plaintextBitsContainer"></div>
           </div>
           <div class="bit-row" id="keyBits">
-            <h2>鍵ビット</h2>
+            <div class="bit-row-header">
+              <h2>鍵ビット</h2>
+              <div class="bit-buttons">
+                <button class="copy-bit-btn" id="copyKeyBits" title="鍵ビット列をコピー">📋</button>
+                <button class="paste-bit-btn" id="pasteKeyBits" title="鍵ビット列をペースト">📄</button>
+              </div>
+            </div>
             <div class="bit-container" id="keyBitsContainer"></div>
           </div>
           <div class="bit-row" id="cipherBits">
-            <h2>暗号ビット</h2>
+            <div class="bit-row-header">
+              <h2>暗号文ビット</h2>
+              <button class="copy-bit-btn" id="copyCipherBits" title="暗号文ビット列をコピー">📋</button>
+            </div>
             <div class="bit-container" id="cipherBitsContainer"></div>
           </div>
         </div>
@@ -47,24 +83,61 @@
       <!-- 復号タブ -->
       <div id="decrypt-tab" class="tab-panel">
         <div class="input-section">
-          <label for="ciphertext">暗号文（テキスト）:</label>
+          <button id="copyFromEncryption" class="copy-btn">📋 暗号化結果を反映</button>
+          <label for="ciphertext" title="入力されたテキストはASCIIコード（2進数）に変換されます。暗号化結果を反映した場合、非印字文字が含まれることがあります。">暗号文（テキスト）:</label>
           <input id="ciphertext" type="text" value="" />
           <div id="decryptErrorMessage" class="error-message"></div>
           <button id="generateDecryptKey">🔑 鍵を入力</button>
           <button id="startDecryption">▶ 復号開始</button>
         </div>
+        
+        <div class="animation-controls" id="decryptAnimationControls" style="display: none;">
+          <div class="control-group">
+            <button id="decryptReset" class="control-btn reset-btn">🔄 リセット</button>
+            <button id="decryptStepBack" class="control-btn">⏮ 1つ戻る</button>
+            <button id="decryptPlayPause" class="control-btn">⏸ 一時停止</button>
+            <button id="decryptStepForward" class="control-btn">⏭ 1つ進む</button>
+            <button id="decryptComplete" class="control-btn complete-btn">⏩ 全処理</button>
+          </div>
+          <div class="control-group">
+            <label for="decryptSpeed" class="speed-label">速度:</label>
+            <select id="decryptSpeed" class="speed-select">
+              <option value="100">超高速 (0.1秒)</option>
+              <option value="300" selected>高速 (0.3秒)</option>
+              <option value="600">標準 (0.6秒)</option>
+              <option value="1000">低速 (1秒)</option>
+              <option value="2000">極低速 (2秒)</option>
+            </select>
+            <span class="progress-indicator" id="decryptProgress">0 / 0</span>
+          </div>
+        </div>
 
         <div class="bit-display">
           <div class="bit-row" id="ciphertextBits">
-            <h2>暗号ビット</h2>
+            <div class="bit-row-header">
+              <h2>暗号文ビット</h2>
+              <div class="bit-buttons">
+                <button class="copy-bit-btn" id="copyCiphertextBits" title="暗号文ビット列をコピー">📋</button>
+                <button class="paste-bit-btn" id="pasteCiphertextBits" title="暗号文ビット列をペースト">📄</button>
+              </div>
+            </div>
             <div class="bit-container" id="ciphertextBitsContainer"></div>
           </div>
           <div class="bit-row" id="decryptKeyBits">
-            <h2>鍵ビット</h2>
+            <div class="bit-row-header">
+              <h2>鍵ビット</h2>
+              <div class="bit-buttons">
+                <button class="copy-bit-btn" id="copyDecryptKeyBits" title="鍵ビット列をコピー">📋</button>
+                <button class="paste-bit-btn" id="pasteDecryptKeyBits" title="鍵ビット列をペースト">📄</button>
+              </div>
+            </div>
             <div class="bit-container" id="decryptKeyBitsContainer"></div>
           </div>
           <div class="bit-row" id="decryptedBits">
-            <h2>平文ビット</h2>
+            <div class="bit-row-header">
+              <h2>平文ビット</h2>
+              <button class="copy-bit-btn" id="copyDecryptedBits" title="平文ビット列をコピー">📋</button>
+            </div>
             <div class="bit-container" id="decryptedBitsContainer"></div>
           </div>
         </div>
@@ -80,14 +153,22 @@
         <p>OTP実験室の内容は後で追加されます。</p>
       </div>
     </div>
+    <footer>
+      <div class="footer-content">
+        🔗 GitHubリポジトリはこちら（ <a href="https://github.com/ipusiron/otp-animation" target="_blank">ipusiron/otp-animation</a> ）
+      </div>
+    </footer>
   </div>
 
-  <footer>
-    <div class="footer">
-      🔗 GitHubリポジトリはこちら（ <a href="https://github.com/ipusiron/otp-animation" target="_blank">ipusiron/otp-animation</a> ）
-    </div>
-  </footer>
+  <!-- トースト通知 -->
+  <div id="toast" class="toast"></div>
 
-  <script src="script.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/bit-operations.js"></script>
+  <script src="js/tab-manager.js"></script>
+  <script src="js/encryption.js"></script>
+  <script src="js/decryption.js"></script>
+  <script src="js/clipboard.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
