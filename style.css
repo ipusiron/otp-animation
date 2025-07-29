@@ -49,6 +49,12 @@ h1 {
 .bit-container {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+/* 8ビットのグループ */
+.bit-group {
+  display: inline-flex;
   gap: 0.4rem;
 }
 
@@ -64,11 +70,6 @@ h1 {
   border-radius: 4px;
   background: #fff;
   transition: all 0.4s ease;
-}
-
-/* 8ビットごとに区切りスペース */
-.bit-container .bit:nth-child(8n+1):not(:first-child) {
-  margin-left: 1rem;
 }
 
 /* 状態別クラス */
@@ -145,6 +146,49 @@ h1 {
   background: #eee;
   color: #bbb;
   border-style: dashed;
+}
+
+/* タブスタイル */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0;
+}
+
+.tab-button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  color: #666;
+}
+
+.tab-button:hover {
+  color: #333;
+}
+
+.tab-button.active {
+  color: #ff6600;
+  border-bottom-color: #ff6600;
+  font-weight: bold;
+}
+
+.tab-content {
+  margin-top: 2rem;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
 }
 
 /* フッター */

@@ -10,27 +10,74 @@
   <div class="container">
     <h1>OTP Animation 🔥</h1>
 
-    <div class="input-section">
-	<div class="input-section">
-	<label for="plaintext">平文（テキスト）:</label>
-	<input id="plaintext" type="text" value="HELLO" />
-	<div id="errorMessage" class="error-message"></div>
-	<button id="generateKey">🔑 鍵を生成</button>
-	<button id="startAnimation">▶ 暗号化開始</button>
-	</div>
+    <div class="tabs">
+      <button class="tab-button active" data-tab="encrypt">暗号化</button>
+      <button class="tab-button" data-tab="decrypt">復号</button>
+      <button class="tab-button" data-tab="xor-basics">XORの基礎</button>
+      <button class="tab-button" data-tab="otp-lab">OTP実験室</button>
+    </div>
 
-    <div class="bit-display">
-      <div class="bit-row" id="plaintextBits">
-        <h2>平文ビット</h2>
-        <div class="bit-container" id="plaintextBitsContainer"></div>
+    <div class="tab-content">
+      <!-- 暗号化タブ -->
+      <div id="encrypt-tab" class="tab-panel active">
+        <div class="input-section">
+          <label for="plaintext">平文（テキスト）:</label>
+          <input id="plaintext" type="text" value="HELLO" />
+          <div id="errorMessage" class="error-message"></div>
+          <button id="generateKey">🔑 鍵を生成</button>
+          <button id="startAnimation">▶ 暗号化開始</button>
+        </div>
+
+        <div class="bit-display">
+          <div class="bit-row" id="plaintextBits">
+            <h2>平文ビット</h2>
+            <div class="bit-container" id="plaintextBitsContainer"></div>
+          </div>
+          <div class="bit-row" id="keyBits">
+            <h2>鍵ビット</h2>
+            <div class="bit-container" id="keyBitsContainer"></div>
+          </div>
+          <div class="bit-row" id="cipherBits">
+            <h2>暗号ビット</h2>
+            <div class="bit-container" id="cipherBitsContainer"></div>
+          </div>
+        </div>
       </div>
-      <div class="bit-row" id="keyBits">
-        <h2>鍵ビット</h2>
-        <div class="bit-container" id="keyBitsContainer"></div>
+
+      <!-- 復号タブ -->
+      <div id="decrypt-tab" class="tab-panel">
+        <div class="input-section">
+          <label for="ciphertext">暗号文（テキスト）:</label>
+          <input id="ciphertext" type="text" value="" />
+          <div id="decryptErrorMessage" class="error-message"></div>
+          <button id="generateDecryptKey">🔑 鍵を入力</button>
+          <button id="startDecryption">▶ 復号開始</button>
+        </div>
+
+        <div class="bit-display">
+          <div class="bit-row" id="ciphertextBits">
+            <h2>暗号ビット</h2>
+            <div class="bit-container" id="ciphertextBitsContainer"></div>
+          </div>
+          <div class="bit-row" id="decryptKeyBits">
+            <h2>鍵ビット</h2>
+            <div class="bit-container" id="decryptKeyBitsContainer"></div>
+          </div>
+          <div class="bit-row" id="decryptedBits">
+            <h2>平文ビット</h2>
+            <div class="bit-container" id="decryptedBitsContainer"></div>
+          </div>
+        </div>
       </div>
-      <div class="bit-row" id="cipherBits">
-        <h2>暗号ビット</h2>
-        <div class="bit-container" id="cipherBitsContainer"></div>
+
+      <!-- XORの基礎タブ -->
+      <div id="xor-basics-tab" class="tab-panel">
+        <p>XORの基礎についての内容は後で追加されます。</p>
+      </div>
+
+      <!-- OTP実験室タブ -->
+      <div id="otp-lab-tab" class="tab-panel">
+        <p>OTP実験室の内容は後で追加されます。</p>
       </div>
     </div>
   </div>
