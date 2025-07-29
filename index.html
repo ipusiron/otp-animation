@@ -36,7 +36,6 @@
           <div id="errorMessage" class="error-message"></div>
           <button id="generateKey">🔑 鍵を生成</button>
           <button id="startAnimation">▶ 暗号化開始</button>
-          <button id="exportEncryption" class="export-btn" disabled>📄 結果を外部出力</button>
         </div>
         
         <div class="animation-controls" id="encryptAnimationControls" style="display: none;">
@@ -89,6 +88,10 @@
             <div class="bit-container" id="cipherBitsContainer"></div>
           </div>
         </div>
+        
+        <div class="export-section">
+          <button id="exportEncryption" class="export-btn" disabled>📄 結果を外部出力</button>
+        </div>
       </div>
 
       <!-- 復号タブ -->
@@ -100,7 +103,6 @@
           <div id="decryptErrorMessage" class="error-message"></div>
           <button id="generateDecryptKey">🔑 鍵を入力</button>
           <button id="startDecryption">▶ 復号開始</button>
-          <button id="exportDecryption" class="export-btn" disabled>📄 結果を外部出力</button>
         </div>
         
         <div class="animation-controls" id="decryptAnimationControls" style="display: none;">
@@ -152,6 +154,10 @@
             </div>
             <div class="bit-container" id="decryptedBitsContainer"></div>
           </div>
+        </div>
+        
+        <div class="export-section">
+          <button id="exportDecryption" class="export-btn" disabled>📄 結果を外部出力</button>
         </div>
       </div>
 

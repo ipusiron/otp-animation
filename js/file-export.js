@@ -1,4 +1,4 @@
-// ファイル出力機能
+// 拡張ファイル出力機能
 
 // ファイルをダウンロードする共通関数
 function downloadFile(content, filename, mimeType = 'text/plain') {
@@ -172,12 +172,18 @@ function exportDecryptionResult() {
 // ファイル出力ボタンのイベントハンドラを設定
 function setupFileExportHandlers() {
   // 暗号化結果出力ボタン
-  document.getElementById('exportEncryption').addEventListener('click', () => {
-    exportEncryptionResult();
-  });
+  const exportEncryption = document.getElementById('exportEncryption');
+  if (exportEncryption) {
+    exportEncryption.addEventListener('click', () => {
+      exportEncryptionResult();
+    });
+  }
 
   // 復号結果出力ボタン
-  document.getElementById('exportDecryption').addEventListener('click', () => {
-    exportDecryptionResult();
-  });
+  const exportDecryption = document.getElementById('exportDecryption');
+  if (exportDecryption) {
+    exportDecryption.addEventListener('click', () => {
+      exportDecryptionResult();
+    });
+  }
 }

@@ -174,14 +174,35 @@ body.dark-mode .copy-btn:hover {
   color: #1a1a1a;
 }
 
-.export-btn {
+/* エクスポートセクション */
+.export-section {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-top: 2px solid #e0e0e0;
+}
+
+body.dark-mode .export-section {
+  border-top-color: #444;
+}
+
+/* エクスポートドロップダウン */
+.export-dropdown {
+  position: relative;
   display: inline-block;
   margin-left: 0.5rem;
+}
+
+.export-btn {
+  display: inline-block;
   background: #e8f5e8;
   border: 2px solid #4caf50;
   color: #2e7d32;
   font-weight: bold;
   transition: all 0.2s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .export-btn:hover {
@@ -212,6 +233,60 @@ body.dark-mode .export-btn:disabled {
   background-color: #1a1a1a;
   color: #666;
   border-color: #333;
+}
+
+.export-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 160px;
+  display: none;
+}
+
+.export-dropdown:hover .export-options {
+  display: block;
+}
+
+.export-option {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.export-option:hover {
+  background-color: #f5f5f5;
+}
+
+.export-option:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.export-option:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+body.dark-mode .export-options {
+  background: #333;
+  border-color: #555;
+}
+
+body.dark-mode .export-option {
+  color: #e0e0e0;
+}
+
+body.dark-mode .export-option:hover {
+  background-color: #444;
 }
 
 /* ビット列の表示 */
