@@ -52,26 +52,18 @@ function updateGateConstruction() {
   if (notAText) {
     notAText.textContent = `¬A=${simulation.notA}`;
     notAText.style.fill = simulation.notA ? ACTIVE_COLOR : INACTIVE_COLOR;
-    notAText.style.transform = 'scale(1.1)';
-    setTimeout(() => notAText.style.transform = 'scale(1)', 200);
   }
   if (notBText) {
     notBText.textContent = `¬B=${simulation.notB}`;
     notBText.style.fill = simulation.notB ? ACTIVE_COLOR : INACTIVE_COLOR;
-    notBText.style.transform = 'scale(1.1)';
-    setTimeout(() => notBText.style.transform = 'scale(1)', 200);
   }
   if (andLeftText) {
     andLeftText.textContent = `A∧¬B=${simulation.andLeft}`;
     andLeftText.style.fill = simulation.andLeft ? ACTIVE_COLOR : INACTIVE_COLOR;
-    andLeftText.style.transform = 'scale(1.1)';
-    setTimeout(() => andLeftText.style.transform = 'scale(1)', 200);
   }
   if (andRightText) {
     andRightText.textContent = `¬A∧B=${simulation.andRight}`;
     andRightText.style.fill = simulation.andRight ? ACTIVE_COLOR : INACTIVE_COLOR;
-    andRightText.style.transform = 'scale(1.1)';
-    setTimeout(() => andRightText.style.transform = 'scale(1)', 200);
   }
   
   // 電線の色を動的に変更
@@ -99,42 +91,41 @@ function updateWireColors(a, b, simulation) {
   const BLACK = isDarkMode ? '#ffffff' : '#333';  // ダークモードでは白色
   const RED = '#e74c3c';
   
-  // 各線の色を設定（順序はHTMLの順序に対応）
-  if (lines.length >= 14) {
+  // 各線の色を設定（新しい配線構造に対応）
+  if (lines.length >= 8) {
     // メイン入力線（A, B）
     lines[0].style.stroke = a ? RED : BLACK; // A入力線
     lines[1].style.stroke = b ? RED : BLACK; // B入力線
     
-    // A分岐線
-    lines[2].style.stroke = a ? RED : BLACK; // A → NOTゲートへ
-    lines[3].style.stroke = a ? RED : BLACK; // A → 上ANDゲートへ
+    // A入力の直接分岐
+    lines[2].style.stroke = a ? RED : BLACK; // A → 上ANDゲート
+    lines[3].style.stroke = a ? RED : BLACK; // A → ¬A NOTゲート
     
-    // B分岐線
-    lines[4].style.stroke = b ? RED : BLACK; // B → NOTゲートへ
-    lines[5].style.stroke = b ? RED : BLACK; // B → 下ANDゲートへ
+    // B入力の直接分岐
+    lines[4].style.stroke = b ? RED : BLACK; // B → 下ANDゲート
+    lines[5].style.stroke = b ? RED : BLACK; // B → ¬B NOTゲート
     
-    // NOTゲートからの接続
-    lines[6].style.stroke = a ? RED : BLACK; // A → AのNOTゲート
-    lines[7].style.stroke = b ? RED : BLACK; // B → BのNOTゲート
-    
-    // 上のANDゲート（A∧¬B）への接続
-    lines[8].style.stroke = a ? RED : BLACK; // A → 上ANDゲート上側
-    lines[9].style.stroke = simulation.notB ? RED : BLACK; // ¬B → 上ANDゲート下側（縦線）
-    lines[10].style.stroke = simulation.notB ? RED : BLACK; // ¬B → 上ANDゲート下側（縦線）
-    lines[11].style.stroke = simulation.notB ? RED : BLACK; // ¬B → 上ANDゲート下側（横線）
-    
-    // 下のANDゲート（¬A∧B）への接続
-    lines[12].style.stroke = simulation.notA ? RED : BLACK; // ¬A → 下ANDゲート上側（縦線）
-    lines[13].style.stroke = simulation.notA ? RED : BLACK; // ¬A → 下ANDゲート上側（縦線）
-    lines[14].style.stroke = simulation.notA ? RED : BLACK; // ¬A → 下ANDゲート上側（横線）
-    lines[15].style.stroke = b ? RED : BLACK; // B → 下ANDゲート下側
+    // NOTゲートからANDゲートへの接続
+    lines[6].style.stroke = simulation.notB ? RED : BLACK; // ¬B → 上ANDゲート
+    lines[7].style.stroke = simulation.notA ? RED : BLACK; // ¬A → 下ANDゲート
     
     // ANDゲートからORゲートへ
-    lines[16].style.stroke = simulation.andLeft ? RED : BLACK; // 上ANDゲート → ORゲート
-    lines[17].style.stroke = simulation.andRight ? RED : BLACK; // 下ANDゲート → ORゲート
+    if (lines.length >= 10) {
+      lines[8].style.stroke = simulation.andLeft ? RED : BLACK; // 上ANDゲート → ORゲート
+      lines[9].style.stroke = simulation.andRight ? RED : BLACK; // 下ANDゲート → ORゲート
+    }
     
     // 出力線
-    lines[18].style.stroke = simulation.result ? RED : BLACK; // ORゲート → 出力
+    if (lines.length >= 11) {
+      lines[10].style.stroke = simulation.result ? RED : BLACK; // ORゲート → 出力
+    }
+  }
+  
+  // 分岐点の円の色も変更
+  const circles = svg.querySelectorAll('circle[r="4"]');
+  if (circles.length >= 2) {
+    circles[0].style.fill = a ? RED : BLACK; // A入力の分岐点
+    circles[1].style.fill = b ? RED : BLACK; // B入力の分岐点
   }
   
   // 入力ラベルの色も変更

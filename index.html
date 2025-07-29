@@ -548,6 +548,9 @@
                   
                   <rect width="100%" height="100%" fill="url(#grid)"/>
                   
+                  <!-- 回路全体を右に30px移動 -->
+                  <g transform="translate(30, 0)">
+                  
                   <!-- メイン入力線（太く、明確に2つだけ） -->
                   <line x1="30" y1="80" x2="120" y2="80" stroke="#333" stroke-width="4"/>
                   <line x1="30" y1="260" x2="120" y2="260" stroke="#333" stroke-width="4"/>
@@ -556,45 +559,32 @@
                   <circle cx="120" cy="80" r="4" fill="#333"/>
                   <circle cx="120" cy="260" r="4" fill="#333"/>
                   
-                  <!-- 分岐線 -->
-                  <line x1="120" y1="80" x2="120" y2="60" stroke="#333" stroke-width="3"/>
-                  <line x1="120" y1="80" x2="120" y2="120" stroke="#333" stroke-width="3"/>
-                  <line x1="120" y1="260" x2="120" y2="220" stroke="#333" stroke-width="3"/>
-                  <line x1="120" y1="260" x2="120" y2="290" stroke="#333" stroke-width="3"/>
+                  <!-- A入力の直接分岐 -->
+                  <line x1="120" y1="80" x2="240" y2="95" stroke="#333" stroke-width="3"/>
+                  <line x1="120" y1="80" x2="150" y2="200" stroke="#333" stroke-width="3"/>
                   
-                  <!-- AのNOTゲートへの接続 -->
-                  <line x1="120" y1="60" x2="150" y2="60" stroke="#333" stroke-width="3"/>
-                  <!-- BのNOTゲートへの接続 -->
-                  <line x1="120" y1="290" x2="150" y2="290" stroke="#333" stroke-width="3"/>
+                  <!-- B入力の直接分岐 -->
+                  <line x1="120" y1="260" x2="240" y2="245" stroke="#333" stroke-width="3"/>
+                  <line x1="120" y1="260" x2="150" y2="140" stroke="#333" stroke-width="3"/>
                   
-                  <!-- NOTゲート（三角形タイプ） -->
+                  <!-- NOTゲート（位置を再配置：BのNOT→上、AのNOT→下） -->
                   <g filter="url(#shadow)">
-                    <path d="M 150 45 L 150 75 L 200 60 Z" fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
-                    <circle cx="205" cy="60" r="4" fill="none" stroke="#667eea" stroke-width="2"/>
-                    <text x="165" y="63" font-size="10" font-weight="bold" fill="#333">NOT</text>
+                    <path d="M 150 125 L 150 155 L 200 140 Z" fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
+                    <circle cx="205" cy="140" r="4" fill="none" stroke="#667eea" stroke-width="2"/>
+                    <text x="165" y="143" font-size="10" font-weight="bold" fill="#333">NOT</text>
                   </g>
                   
                   <g filter="url(#shadow)">
-                    <path d="M 150 275 L 150 305 L 200 290 Z" fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
-                    <circle cx="205" cy="290" r="4" fill="none" stroke="#667eea" stroke-width="2"/>
-                    <text x="165" y="293" font-size="10" font-weight="bold" fill="#333">NOT</text>
+                    <path d="M 150 185 L 150 215 L 200 200 Z" fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
+                    <circle cx="205" cy="200" r="4" fill="none" stroke="#667eea" stroke-width="2"/>
+                    <text x="165" y="203" font-size="10" font-weight="bold" fill="#333">NOT</text>
                   </g>
                   
-                  <!-- 上のANDゲート（A∧¬B用）への接続 -->
-                  <!-- A → 上のANDゲートの上側入力 -->
-                  <line x1="120" y1="120" x2="240" y2="95" stroke="#333" stroke-width="3"/>
+                  <!-- NOTゲートからANDゲートへの接続 -->
                   <!-- ¬B → 上のANDゲートの下側入力 -->
-                  <line x1="209" y1="290" x2="230" y2="290" stroke="#333" stroke-width="3"/>
-                  <line x1="230" y1="290" x2="230" y2="115" stroke="#333" stroke-width="3"/>
-                  <line x1="230" y1="115" x2="240" y2="115" stroke="#333" stroke-width="3"/>
-                  
-                  <!-- 下のANDゲート（¬A∧B用）への接続 -->
+                  <line x1="209" y1="140" x2="240" y2="115" stroke="#333" stroke-width="3"/>
                   <!-- ¬A → 下のANDゲートの上側入力 -->
-                  <line x1="209" y1="60" x2="220" y2="60" stroke="#333" stroke-width="3"/>
-                  <line x1="220" y1="60" x2="220" y2="225" stroke="#333" stroke-width="3"/>
-                  <line x1="220" y1="225" x2="240" y2="225" stroke="#333" stroke-width="3"/>
-                  <!-- B → 下のANDゲートの下側入力 -->
-                  <line x1="120" y1="220" x2="240" y2="245" stroke="#333" stroke-width="3"/>
+                  <line x1="209" y1="200" x2="240" y2="225" stroke="#333" stroke-width="3"/>
                   
                   <!-- ANDゲート（改良されたデザイン） -->
                   <g filter="url(#shadow)">
@@ -630,16 +620,26 @@
                   <!-- 出力ラベル -->
                   <text x="490" y="175" font-size="16" font-weight="bold" fill="#333">A ⊕ B</text>
                   
-                  <!-- 中間値表示（位置調整、色分け） -->
-                  <text x="215" y="55" font-size="12" font-weight="bold" fill="#e74c3c" id="notA">¬A</text>
-                  <text x="215" y="305" font-size="12" font-weight="bold" fill="#e74c3c" id="notB">¬B</text>
-                  <text x="310" y="100" font-size="12" font-weight="bold" fill="#27ae60" id="andLeft">A∧¬B</text>
-                  <text x="310" y="250" font-size="12" font-weight="bold" fill="#27ae60" id="andRight">¬A∧B</text>
+                  <!-- 中間値表示（NOTゲート近くに配置） -->
+                  <!-- ¬B: 上のNOTゲートの左下に配置 -->
+                  <text x="215" y="155" font-size="11" font-weight="bold" fill="#e74c3c" id="notB">¬B</text>
+                  <!-- ¬A: 下のNOTゲートの左上に配置 -->
+                  <text x="215" y="190" font-size="11" font-weight="bold" fill="#e74c3c" id="notA">¬A</text>
+                  <!-- A∧¬B: 上ANDゲート出力の少し上に配置 -->
+                  <text x="310" y="95" font-size="11" font-weight="bold" fill="#27ae60" id="andLeft">A∧¬B</text>
+                  <!-- ¬A∧B: 下ANDゲート出力の少し下に配置 -->
+                  <text x="310" y="250" font-size="11" font-weight="bold" fill="#27ae60" id="andRight">¬A∧B</text>
                   
                   <!-- 動作フロー説明 -->
-                  <text x="50" y="30" font-size="12" font-style="italic" fill="#666">
-                    A ⊕ B = (A ∧ ¬B) ∨ (¬A ∧ B)
-                  </text>
+                  <g>
+                    <!-- 背景ボックス -->
+                    <rect x="45" y="15" width="220" height="25" rx="5" fill="white" fill-opacity="0.9" stroke="#667eea" stroke-width="1"/>
+                    <text x="155" y="30" font-size="12" font-style="italic" fill="#333" text-anchor="middle">
+                      A ⊕ B = (A ∧ ¬B) ∨ (¬A ∧ B)
+                    </text>
+                  </g>
+                  
+                  </g> <!-- 回路全体のグループ終了 -->
                 </svg>
               </div>
 
@@ -957,7 +957,7 @@
             <li><strong>例</strong>: <code>01001000_01000101</code> または <code>01001000 01000101</code></li>
           </ul>
           <div class="help-note">
-            <strong>⚠️ 注意:</strong> ブラウザの制限により、2回目以降のペーストでは手動入力ダイアログが表示される場合があります。
+            <strong>⚠️ 注意:</strong> ブラウザーの制限により、2回目以降のペーストでは手動入力ダイアログが表示される場合があります。
           </div>
         </div>
 
@@ -972,7 +972,7 @@
 
         <div class="help-section">
           <h3>🔐 ワンタイムパッド（OTP）について</h3>
-          <p>ワンタイムパッドは理論上最も安全な古典暗号方式です。</p>
+          <p>ワンタイムパッドは理論上もっとも安全な古典暗号方式です。</p>
           <ul>
             <li><strong>完全秘匿性</strong>: 数学的に解読不可能であることが証明済み</li>
             <li><strong>鍵の要件</strong>: 平文と同じ長さの完全ランダムビット列</li>
@@ -1005,7 +1005,7 @@
           <ul>
             <li><strong>対応文字</strong>: ASCII 32-126 (印刷可能文字)</li>
             <li><strong>ビット表現</strong>: 8ビット/文字、ビッグエンディアン</li>
-            <li><strong>ブラウザ要件</strong>: ES6対応、Clipboard API推奨</li>
+            <li><strong>ブラウザー要件</strong>: ES6対応、Clipboard API推奨</li>
             <li><strong>パフォーマンス</strong>: 最大推奨文字数 100文字程度</li>
           </ul>
         </div>

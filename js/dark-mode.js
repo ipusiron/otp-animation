@@ -33,6 +33,13 @@ function enableDarkMode() {
   document.body.classList.add('dark-mode');
   updateToggleButton();
   localStorage.setItem(DARK_MODE_KEY, 'true');
+  
+  // OTP実験室タブが表示されている場合、回路の色を更新
+  if (document.getElementById('otp-lab-tab')?.classList.contains('active')) {
+    if (typeof updateGateConstruction === 'function') {
+      updateGateConstruction();
+    }
+  }
 }
 
 // ダークモードを無効にする
@@ -41,6 +48,13 @@ function disableDarkMode() {
   document.body.classList.remove('dark-mode');
   updateToggleButton();
   localStorage.setItem(DARK_MODE_KEY, 'false');
+  
+  // OTP実験室タブが表示されている場合、回路の色を更新
+  if (document.getElementById('otp-lab-tab')?.classList.contains('active')) {
+    if (typeof updateGateConstruction === 'function') {
+      updateGateConstruction();
+    }
+  }
 }
 
 // トグルボタンの表示を更新
