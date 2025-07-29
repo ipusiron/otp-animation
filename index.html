@@ -928,12 +928,19 @@
       <div class="modal-body">
         <div class="help-section">
           <h3>📖 基本的な使い方</h3>
+          <h4>暗号化タブ</h4>
           <ol>
             <li><strong>平文を入力</strong>: ASCII文字（英数字・記号）のみ対応</li>
             <li><strong>🔑 鍵を生成</strong>: 平文と同じ長さのランダム鍵を生成</li>
             <li><strong>▶ 暗号化開始</strong>: ビット単位のXOR処理をアニメーション表示</li>
-            <li><strong>復号タブ</strong>: 暗号文と鍵から元の平文を復元</li>
+            <li><strong>📄 結果を外部出力</strong>: 暗号化完了後、詳細レポートを出力</li>
           </ol>
+          <h4>復号タブ</h4>
+          <ul>
+            <li><strong>📋 暗号化結果を反映</strong>: 暗号化タブの結果を自動コピー</li>
+            <li><strong>手動入力</strong>: 暗号文と鍵を直接入力可能</li>
+            <li><strong>復号処理</strong>: 暗号文と鍵から元の平文を復元</li>
+          </ul>
         </div>
 
         <div class="help-section">
@@ -964,9 +971,39 @@
         <div class="help-section">
           <h3>📄 ファイル出力機能</h3>
           <ul>
-            <li><strong>📄 結果を出力</strong>: 処理結果を詳細レポートとして出力</li>
+            <li><strong>📄 結果を外部出力</strong>: 処理結果を詳細レポートとして出力</li>
             <li><strong>出力内容</strong>: 入力データ、ビット列、XOR演算詳細、注釈</li>
-            <li><strong>ファイル名</strong>: <code>otp-encryption-YYYYMMDDTHHMMSS.txt</code></li>
+            <li><strong>ファイル名</strong>: <code>otp-[encryption|decryption]-YYYYMMDDTHHMMSS.txt</code></li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>📚 XORの基礎タブ</h3>
+          <ul>
+            <li><strong>XOR演算の説明</strong>: 排他的論理和の基本概念と真理値表</li>
+            <li><strong>数学的性質</strong>: 交換法則、結合法則、恒等元・逆元の存在</li>
+            <li><strong>ビット演算デモ</strong>: インタラクティブなXOR計算</li>
+            <li><strong>応用分野</strong>: 暗号技術、エラー検出、マスク処理など</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>🧪 OTP実験室タブ</h3>
+          <h4>実験1: XORゲート構成シミュレーター</h4>
+          <ul>
+            <li><strong>回路図</strong>: NOT、AND、ORゲートでXORを構築</li>
+            <li><strong>動的表示</strong>: 信号に応じて線の色が変化（0:黒/白、1:赤）</li>
+            <li><strong>対話的操作</strong>: 表のセルをホバーで回路要素をハイライト</li>
+          </ul>
+          <h4>実験2: 鍵再利用の脆弱性</h4>
+          <ul>
+            <li><strong>実証</strong>: C₁ ⊕ C₂ = P₁ ⊕ P₂ の数学的証明</li>
+            <li><strong>視覚的表示</strong>: ビット列での計算過程を表示</li>
+          </ul>
+          <h4>実験3: 断片解析デモ</h4>
+          <ul>
+            <li><strong>鍵推測</strong>: 既知の平文断片から鍵ビットを計算</li>
+            <li><strong>K = P ⊕ C</strong>: 基本的な暗号解析手法の実演</li>
           </ul>
         </div>
 
@@ -988,6 +1025,8 @@
             <li><strong>タブ切り替え</strong>: 暗号化、復号、XORの基礎、OTP実験室</li>
             <li><strong>レスポンシブ対応</strong>: 画面サイズに応じて1〜5文字表示を調整</li>
             <li><strong>エラー処理</strong>: 不正文字の検出とバリデーション</li>
+            <li><strong>アコーディオンUI</strong>: OTP実験室の各実験は展開/折りたたみ可能</li>
+            <li><strong>自動保存</strong>: ダークモード設定はローカルストレージに保存</li>
           </ul>
         </div>
 
