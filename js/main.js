@@ -13,6 +13,9 @@ window.addEventListener('DOMContentLoaded', () => {
   // ダークモード機能を初期化
   initializeDarkMode();
   setupDarkModeHandlers();
+  
+  // ヘルプモーダル機能を初期化
+  setupHelpModalHandlers();
 
   const input = document.getElementById('plaintext');
   const text = input.value;

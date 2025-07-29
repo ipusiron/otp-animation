@@ -37,11 +37,16 @@ h1 {
   flex-grow: 1;
 }
 
-.dark-mode-toggle {
+.control-buttons {
+  display: flex;
+  gap: 0.5rem;
   position: absolute;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.control-button {
   background: none;
   border: 2px solid #ddd;
   border-radius: 50%;
@@ -50,20 +55,27 @@ h1 {
   font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.dark-mode-toggle:hover {
+.control-button:hover {
   background: #f0f0f0;
-  transform: translateY(-50%) scale(1.1);
+  transform: scale(1.1);
+}
+
+body.dark-mode .control-button {
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+body.dark-mode .control-button:hover {
+  background: #333;
 }
 
 body.dark-mode .dark-mode-toggle {
-  border-color: #555;
   color: #ffd700;
-}
-
-body.dark-mode .dark-mode-toggle:hover {
-  background: #333;
 }
 
 /* 入力セクション */
@@ -736,6 +748,225 @@ body.dark-mode footer a {
 }
 
 body.dark-mode footer a:hover {
+  color: #81c784;
+}
+
+/* モーダルスタイル */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+body.dark-mode .modal-content {
+  background: #2d2d2d;
+  color: #e0e0e0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+body.dark-mode .modal-header {
+  border-bottom-color: #444;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+body.dark-mode .modal-header h2 {
+  color: #e0e0e0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: #f0f0f0;
+  color: #666;
+}
+
+body.dark-mode .modal-close {
+  color: #aaa;
+}
+
+body.dark-mode .modal-close:hover {
+  background: #444;
+  color: #ddd;
+}
+
+.modal-body {
+  padding: 2rem;
+  overflow-y: auto;
+  flex-grow: 1;
+  line-height: 1.6;
+}
+
+.modal-footer {
+  padding: 1rem 2rem;
+  border-top: 1px solid #eee;
+  text-align: center;
+  flex-shrink: 0;
+  background: #f9f9f9;
+}
+
+body.dark-mode .modal-footer {
+  border-top-color: #444;
+  background: #2a2a2a;
+}
+
+.help-section {
+  margin-bottom: 2rem;
+}
+
+.help-section:last-child {
+  margin-bottom: 0;
+}
+
+.help-section h3 {
+  color: #ff6600;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #ff6600;
+  padding-bottom: 0.5rem;
+}
+
+body.dark-mode .help-section h3 {
+  color: #ff8c42;
+  border-bottom-color: #ff8c42;
+}
+
+.help-section ul, .help-section ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.help-section li {
+  margin-bottom: 0.5rem;
+}
+
+.help-section code {
+  background: #f4f4f4;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.9rem;
+}
+
+body.dark-mode .help-section code {
+  background: #404040;
+  color: #e0e0e0;
+}
+
+.help-section kbd {
+  background: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  padding: 0.2rem 0.4rem;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.8rem;
+}
+
+body.dark-mode .help-section kbd {
+  background: #404040;
+  border-color: #666;
+  color: #e0e0e0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.help-note {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+  color: #856404;
+}
+
+body.dark-mode .help-note {
+  background: #4d3d1a;
+  border-color: #b8860b;
+  color: #ffd700;
+}
+
+.modal-footer a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.modal-footer a:hover {
+  text-decoration: underline;
+}
+
+body.dark-mode .modal-footer a {
+  color: #66bb6a;
+}
+
+body.dark-mode .modal-footer a:hover {
   color: #81c784;
 }
 
