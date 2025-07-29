@@ -36,7 +36,7 @@
           <div id="errorMessage" class="error-message"></div>
           <button id="generateKey">🔑 鍵を生成</button>
           <button id="startAnimation">▶ 暗号化開始</button>
-          <button id="exportEncryption" class="export-btn">📄 結果を出力</button>
+          <button id="exportEncryption" class="export-btn" disabled>📄 結果を外部出力</button>
         </div>
         
         <div class="animation-controls" id="encryptAnimationControls" style="display: none;">
@@ -100,7 +100,7 @@
           <div id="decryptErrorMessage" class="error-message"></div>
           <button id="generateDecryptKey">🔑 鍵を入力</button>
           <button id="startDecryption">▶ 復号開始</button>
-          <button id="exportDecryption" class="export-btn">📄 結果を出力</button>
+          <button id="exportDecryption" class="export-btn" disabled>📄 結果を外部出力</button>
         </div>
         
         <div class="animation-controls" id="decryptAnimationControls" style="display: none;">
@@ -157,12 +157,758 @@
 
       <!-- XORの基礎タブ -->
       <div id="xor-basics-tab" class="tab-panel">
-        <p>XORの基礎についての内容は後で追加されます。</p>
+        <div class="xor-explanation">
+          <h2>🔗 XOR（排他的論理和）とは？</h2>
+          
+          <div class="explanation-section">
+            <p>XOR（eXclusive OR：排他的論理和）は、2つの入力ビットから1つの出力ビットを生成する論理演算です。</p>
+            <p>「排他的」という名前の通り、<strong>2つの入力が異なる場合のみ1を出力し、同じ場合は0を出力</strong>します。</p>
+            <p>この性質により、暗号化と復号で同じ演算を使用できるため、ワンタイムパッドなどの暗号方式で重要な役割を果たします。</p>
+          </div>
+
+          <div class="explanation-section">
+            <h3>📊 XOR真理値表</h3>
+            <div class="truth-table-container">
+              <table class="truth-table">
+                <thead>
+                  <tr>
+                    <th>入力A</th>
+                    <th>入力B</th>
+                    <th>出力<br>（A ⊕ B）</th>
+                    <th>説明</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="bit-cell">0</td>
+                    <td class="bit-cell">0</td>
+                    <td class="bit-cell result">0</td>
+                    <td>同じ値なので0</td>
+                  </tr>
+                  <tr>
+                    <td class="bit-cell">0</td>
+                    <td class="bit-cell">1</td>
+                    <td class="bit-cell result">1</td>
+                    <td>異なる値なので1</td>
+                  </tr>
+                  <tr>
+                    <td class="bit-cell">1</td>
+                    <td class="bit-cell">0</td>
+                    <td class="bit-cell result">1</td>
+                    <td>異なる値なので1</td>
+                  </tr>
+                  <tr>
+                    <td class="bit-cell">1</td>
+                    <td class="bit-cell">1</td>
+                    <td class="bit-cell result">0</td>
+                    <td>同じ値なので0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="explanation-section">
+            <h3>🔐 暗号での活用</h3>
+            <div class="crypto-example">
+              <div class="crypto-step">
+                <h4>暗号化：平文 ⊕ 鍵 = 暗号文</h4>
+                <div class="bit-operation">
+                  <span class="operand plain">1</span>
+                  <span class="operator">⊕</span>
+                  <span class="operand key">0</span>
+                  <span class="equals">=</span>
+                  <span class="result cipher">1</span>
+                </div>
+              </div>
+              
+              <div class="crypto-step">
+                <h4>復号：暗号文 ⊕ 鍵 = 平文</h4>
+                <div class="bit-operation">
+                  <span class="operand cipher">1</span>
+                  <span class="operator">⊕</span>
+                  <span class="operand key">0</span>
+                  <span class="equals">=</span>
+                  <span class="result plain">1</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="key-point">
+              <strong>重要な性質：</strong>
+              <code>A ⊕ B ⊕ B = A</code>
+              <br>
+              この性質により、同じ鍵で暗号化と復号が可能になります。
+            </div>
+          </div>
+
+          <div class="explanation-section">
+            <h3>🎯 インタラクティブデモ</h3>
+            <div class="interactive-demo">
+              <div class="demo-inputs">
+                <div class="input-group">
+                  <label for="bitA">ビットA:</label>
+                  <select id="bitA" class="bit-select">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                  </select>
+                </div>
+                
+                <div class="operator-display">⊕</div>
+                
+                <div class="input-group">
+                  <label for="bitB">ビットB:</label>
+                  <select id="bitB" class="bit-select">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                  </select>
+                </div>
+                
+                <div class="equals-display">=</div>
+                
+                <div class="result-display">
+                  <span id="xorResult" class="xor-result">0</span>
+                </div>
+              </div>
+              
+              <div class="demo-explanation">
+                <p id="demoExplanation">
+                  0 ⊕ 0 = 0（同じ値なので結果は0）
+                </p>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="explanation-section">
+            <h3>⚡ ハードウェアとの親和性</h3>
+            <p>XORはビット演算であるため、<strong>ハードウェア実装との相性が非常に良い</strong>特徴があります。</p>
+            
+            <div class="hardware-benefits">
+              <div class="benefit-item">
+                <h4>🔧 シンプルな回路構成</h4>
+                <p>XORゲートは基本的な論理ゲートの組み合わせで実現でき、回路が単純で高速です。</p>
+              </div>
+              
+              <div class="benefit-item">
+                <h4>⚡ 高速処理</h4>
+                <p>ハードウェアレベルでの並列処理が可能で、大量のデータを高速に処理できます。</p>
+              </div>
+              
+              <div class="benefit-item">
+                <h4>🔋 低消費電力</h4>
+                <p>シンプルな回路のため、消費電力が少なく効率的です。</p>
+              </div>
+            </div>
+
+            <div class="xor-gate-section">
+              <h4>🔌 XORゲート（論理記号）</h4>
+              <div class="logic-gate-display">
+                <div class="gate-diagram">
+                  <svg width="220" height="120" viewBox="0 0 220 120" class="xor-gate-svg">
+                    <!-- XORゲートの背面曲線（特徴的な二重線） -->
+                    <path d="M 15 25 Q 35 60 15 95" 
+                          fill="none" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- XORゲートのメイン形状 -->
+                    <path d="M 25 25 Q 45 60 25 95" 
+                          fill="none" stroke="#333" stroke-width="2"/>
+                    <path d="M 25 25 Q 80 25 110 60 Q 80 95 25 95" 
+                          fill="none" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- 入力線 -->
+                    <line x1="5" y1="40" x2="25" y2="40" stroke="#333" stroke-width="2"/>
+                    <line x1="5" y1="80" x2="25" y2="80" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- 出力線 -->
+                    <line x1="110" y1="60" x2="130" y2="60" stroke="#333" stroke-width="2"/>
+                    
+                    <!-- ラベル -->
+                    <text x="0" y="35" font-family="Arial" font-size="14" fill="#333">A</text>
+                    <text x="0" y="85" font-family="Arial" font-size="14" fill="#333">B</text>
+                    <text x="135" y="65" font-family="Arial" font-size="14" fill="#333">A ⊕ B</text>
+                    
+                    <!-- ダークモード対応 -->
+                    <style>
+                      body.dark-mode .xor-gate-svg path,
+                      body.dark-mode .xor-gate-svg line {
+                        stroke: #e0e0e0;
+                      }
+                      body.dark-mode .xor-gate-svg text {
+                        fill: #e0e0e0;
+                      }
+                    </style>
+                  </svg>
+                </div>
+                
+                <div class="gate-explanation">
+                  <p><strong>XORゲート</strong>は2つの入力を受け取り、それらが異なる場合のみ1を出力します。</p>
+                  <p>このシンプルな構造により、CPUやFPGA、専用チップなどで効率的に実装できます。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="explanation-section">
+            <h3>🔍 XORの数学的性質</h3>
+            <div class="mathematical-properties">
+              <div class="property-item">
+                <h4>交換法則（Commutative）</h4>
+                <code>A ⊕ B = B ⊕ A</code>
+                <p>入力の順序を変えても結果は同じ</p>
+              </div>
+              
+              <div class="property-item">
+                <h4>結合法則（Associative）</h4>
+                <code>(A ⊕ B) ⊕ C = A ⊕ (B ⊕ C)</code>
+                <p>複数の値をXORする際、計算順序は関係ない</p>
+              </div>
+              
+              <div class="property-item">
+                <h4>恒等元（Identity）の存在</h4>
+                <code>A ⊕ 0 = A</code>
+                <p>任意の値と0をXORしても元の値のまま</p>
+              </div>
+              
+              <div class="property-item">
+                <h4>逆元（Inverse）の存在</h4>
+                <code>A ⊕ A = 0</code>
+                <p>同じ値同士をXORすると0になる</p>
+              </div>
+            </div>
+            
+            <div class="key-insight">
+              <strong>💡 重要な洞察:</strong>
+              これらの性質により、XORは<strong>群論的構造</strong>を持ち、暗号学において数学的に安全な演算として活用されています。
+            </div>
+          </div>
+
+          <div class="explanation-section">
+            <h3>🌟 応用分野の詳細</h3>
+            
+            <div class="application-grid">
+              <div class="app-item">
+                <h4>🛡️ 情報セキュリティ</h4>
+                <ul>
+                  <li><strong>ストリーム暗号</strong>: RC4, ChaCha20など</li>
+                  <li><strong>ブロック暗号</strong>: AESの内部演算</li>
+                  <li><strong>ハッシュ関数</strong>: SHA系の演算</li>
+                  <li><strong>デジタル署名</strong>: 署名アルゴリズムの一部</li>
+                </ul>
+              </div>
+              
+              <div class="app-item">
+                <h4>💻 コンピューターサイエンス</h4>
+                <ul>
+                  <li><strong>RAID技術</strong>: データの冗長化</li>
+                  <li><strong>圧縮アルゴリズム</strong>: データ差分の計算</li>
+                  <li><strong>ネットワーク</strong>: パケットのチェックサム</li>
+                  <li><strong>メモリ管理</strong>: ECC（誤り訂正符号）</li>
+                </ul>
+              </div>
+              
+              <div class="app-item">
+                <h4>🔬 アルゴリズム技法</h4>
+                <ul>
+                  <li><strong>変数交換</strong>: 一時変数なしでのswap</li>
+                  <li><strong>重複検出</strong>: 配列内の重複要素検索</li>
+                  <li><strong>ビットマスク</strong>: フラグ管理</li>
+                  <li><strong>乱数生成</strong>: LFSR（線形フィードバックシフトレジスタ）</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="explanation-section">
+            <h3>🔄 XORと他の論理演算の比較</h3>
+            <div class="logic-comparison">
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th>演算</th>
+                    <th>記号</th>
+                    <th>0,0</th>
+                    <th>0,1</th>
+                    <th>1,0</th>
+                    <th>1,1</th>
+                    <th>特徴</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>AND</strong></td>
+                    <td>∧</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>両方が1の時のみ1</td>
+                  </tr>
+                  <tr>
+                    <td><strong>OR</strong></td>
+                    <td>∨</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>どちらかが1なら1</td>
+                  </tr>
+                  <tr class="highlight-row">
+                    <td><strong>XOR</strong></td>
+                    <td>⊕</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>異なる時のみ1（排他的）</td>
+                  </tr>
+                  <tr>
+                    <td><strong>NAND</strong></td>
+                    <td>↑</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>ANDの否定</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <p><strong>XORの独特さ:</strong> XORは唯一「可逆性」を持つ基本論理演算です。この性質が暗号での応用を可能にしています。</p>
+          </div>
+        </div>
       </div>
 
       <!-- OTP実験室タブ -->
       <div id="otp-lab-tab" class="tab-panel">
-        <p>OTP実験室の内容は後で追加されます。</p>
+        <div class="lab-introduction">
+          <h2>🧪 OTP実験室</h2>
+          <p>ワンタイムパッド（OTP）の特性と脆弱性を実験を通して学習します。</p>
+          <p>各実験では、OTPの数学的性質や、なぜ「一度だけ使用」が重要なのかを体験的に理解できます。</p>
+        </div>
+
+        <!-- 実験1: XORゲートの構成 -->
+        <div class="experiment-section" id="experiment1">
+          <div class="experiment-header accordion-header" data-experiment="1">
+            <h3>🔬 実験1: NOT・ANDゲートからXORゲートを構成 <span class="accordion-icon">▼</span></h3>
+            <p>XORゲートは基本的な論理ゲート（NOT、AND、OR）の組み合わせで作ることができます。</p>
+          </div>
+          
+          <div class="experiment-content" id="experiment1-content">
+
+          <div class="gate-construction">
+            <div class="construction-theory">
+              <h4>📖 理論</h4>
+              <p><strong>XOR演算の等価式:</strong></p>
+              <div class="formula">
+                <code>A ⊕ B = (A ∧ ¬B) ∨ (¬A ∧ B)</code>
+              </div>
+              <p>これは「Aが1でBが0、またはAが0でBが1の場合に1を出力」を意味します。</p>
+            </div>
+
+            <div class="gate-simulator">
+              <h4>🎮 シミュレーター</h4>
+              
+              <div class="input-controls">
+                <div class="input-group">
+                  <label for="gateInputA">入力A:</label>
+                  <select id="gateInputA" class="gate-input">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                  </select>
+                </div>
+                
+                <div class="input-group">
+                  <label for="gateInputB">入力B:</label>
+                  <select id="gateInputB" class="gate-input">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="gate-diagram-complex">
+                <svg width="700" height="350" viewBox="0 0 700 350" class="construction-svg">
+                  <!-- 背景グリッド（微細） -->
+                  <defs>
+                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                      <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(102, 126, 234, 0.1)" stroke-width="0.5"/>
+                    </pattern>
+                    <!-- グラデーション定義 -->
+                    <linearGradient id="gateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.1"/>
+                      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.1"/>
+                    </linearGradient>
+                    <!-- シャドウ効果 -->
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feDropShadow dx="2" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.2)"/>
+                    </filter>
+                  </defs>
+                  
+                  <rect width="100%" height="100%" fill="url(#grid)"/>
+                  
+                  <!-- メイン入力線（太く、明確に2つだけ） -->
+                  <line x1="30" y1="80" x2="120" y2="80" stroke="#333" stroke-width="4"/>
+                  <line x1="30" y1="260" x2="120" y2="260" stroke="#333" stroke-width="4"/>
+                  
+                  <!-- 分岐点を明確に -->
+                  <circle cx="120" cy="80" r="4" fill="#333"/>
+                  <circle cx="120" cy="260" r="4" fill="#333"/>
+                  
+                  <!-- 分岐線 -->
+                  <line x1="120" y1="80" x2="120" y2="60" stroke="#333" stroke-width="3"/>
+                  <line x1="120" y1="80" x2="120" y2="120" stroke="#333" stroke-width="3"/>
+                  <line x1="120" y1="260" x2="120" y2="220" stroke="#333" stroke-width="3"/>
+                  <line x1="120" y1="260" x2="120" y2="290" stroke="#333" stroke-width="3"/>
+                  
+                  <!-- AのNOTゲートへの接続 -->
+                  <line x1="120" y1="60" x2="150" y2="60" stroke="#333" stroke-width="3"/>
+                  <!-- BのNOTゲートへの接続 -->
+                  <line x1="120" y1="290" x2="150" y2="290" stroke="#333" stroke-width="3"/>
+                  
+                  <!-- NOTゲート（三角形タイプ） -->
+                  <g filter="url(#shadow)">
+                    <path d="M 150 45 L 150 75 L 200 60 Z" fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
+                    <circle cx="205" cy="60" r="4" fill="none" stroke="#667eea" stroke-width="2"/>
+                    <text x="165" y="63" font-size="10" font-weight="bold" fill="#333">NOT</text>
+                  </g>
+                  
+                  <g filter="url(#shadow)">
+                    <path d="M 150 275 L 150 305 L 200 290 Z" fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
+                    <circle cx="205" cy="290" r="4" fill="none" stroke="#667eea" stroke-width="2"/>
+                    <text x="165" y="293" font-size="10" font-weight="bold" fill="#333">NOT</text>
+                  </g>
+                  
+                  <!-- 上のANDゲート（A∧¬B用）への接続 -->
+                  <!-- A → 上のANDゲートの上側入力 -->
+                  <line x1="120" y1="120" x2="240" y2="95" stroke="#333" stroke-width="3"/>
+                  <!-- ¬B → 上のANDゲートの下側入力 -->
+                  <line x1="209" y1="290" x2="230" y2="290" stroke="#333" stroke-width="3"/>
+                  <line x1="230" y1="290" x2="230" y2="115" stroke="#333" stroke-width="3"/>
+                  <line x1="230" y1="115" x2="240" y2="115" stroke="#333" stroke-width="3"/>
+                  
+                  <!-- 下のANDゲート（¬A∧B用）への接続 -->
+                  <!-- ¬A → 下のANDゲートの上側入力 -->
+                  <line x1="209" y1="60" x2="220" y2="60" stroke="#333" stroke-width="3"/>
+                  <line x1="220" y1="60" x2="220" y2="225" stroke="#333" stroke-width="3"/>
+                  <line x1="220" y1="225" x2="240" y2="225" stroke="#333" stroke-width="3"/>
+                  <!-- B → 下のANDゲートの下側入力 -->
+                  <line x1="120" y1="220" x2="240" y2="245" stroke="#333" stroke-width="3"/>
+                  
+                  <!-- ANDゲート（改良されたデザイン） -->
+                  <g filter="url(#shadow)">
+                    <path d="M 240 85 L 280 85 Q 300 85 300 105 Q 300 125 280 125 L 240 125 Z" 
+                          fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
+                    <text x="255" y="108" font-size="11" font-weight="bold" fill="#333">AND</text>
+                  </g>
+                  
+                  <g filter="url(#shadow)">
+                    <path d="M 240 215 L 280 215 Q 300 215 300 235 Q 300 255 280 255 L 240 255 Z" 
+                          fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
+                    <text x="255" y="238" font-size="11" font-weight="bold" fill="#333">AND</text>
+                  </g>
+                  
+                  <!-- ANDゲートからORゲートへの接続 -->
+                  <line x1="300" y1="105" x2="380" y2="155" stroke="#333" stroke-width="3"/>
+                  <line x1="300" y1="235" x2="380" y2="185" stroke="#333" stroke-width="3"/>
+                  
+                  <!-- ORゲート（改良されたデザイン） -->
+                  <g filter="url(#shadow)">
+                    <path d="M 380 140 Q 390 140 390 170 Q 390 200 380 200 Q 405 195 430 170 Q 405 145 380 140" 
+                          fill="url(#gateGradient)" stroke="#667eea" stroke-width="2"/>
+                    <text x="398" y="175" font-size="11" font-weight="bold" fill="#333">OR</text>
+                  </g>
+                  
+                  <!-- 出力線 -->
+                  <line x1="430" y1="170" x2="480" y2="170" stroke="#333" stroke-width="4"/>
+                  
+                  <!-- 入力ラベル（大きく、明確に） -->
+                  <text x="15" y="75" font-size="16" font-weight="bold" fill="#333">A</text>
+                  <text x="15" y="255" font-size="16" font-weight="bold" fill="#333">B</text>
+                  
+                  <!-- 出力ラベル -->
+                  <text x="490" y="175" font-size="16" font-weight="bold" fill="#333">A ⊕ B</text>
+                  
+                  <!-- 中間値表示（位置調整、色分け） -->
+                  <text x="215" y="55" font-size="12" font-weight="bold" fill="#e74c3c" id="notA">¬A</text>
+                  <text x="215" y="305" font-size="12" font-weight="bold" fill="#e74c3c" id="notB">¬B</text>
+                  <text x="310" y="100" font-size="12" font-weight="bold" fill="#27ae60" id="andLeft">A∧¬B</text>
+                  <text x="310" y="250" font-size="12" font-weight="bold" fill="#27ae60" id="andRight">¬A∧B</text>
+                  
+                  <!-- 動作フロー説明 -->
+                  <text x="50" y="30" font-size="12" font-style="italic" fill="#666">
+                    A ⊕ B = (A ∧ ¬B) ∨ (¬A ∧ B)
+                  </text>
+                </svg>
+              </div>
+
+              <div class="gate-results">
+                <div class="result-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>¬A</th>
+                        <th>¬B</th>
+                        <th>A∧¬B</th>
+                        <th>¬A∧B</th>
+                        <th>結果 (A⊕B)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr id="gateResultRow">
+                        <td id="inputADisplay">0</td>
+                        <td id="inputBDisplay">0</td>
+                        <td id="notADisplay">1</td>
+                        <td id="notBDisplay">1</td>
+                        <td id="andLeftDisplay">0</td>
+                        <td id="andRightDisplay">0</td>
+                        <td id="finalResultDisplay" class="result-cell">0</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div class="construction-explanation">
+                  <p id="constructionExplanation">
+                    0 ⊕ 0 = 0 (NOT(0)=1, NOT(0)=1, 0∧1=0, 1∧0=0, 0∨0=0)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <!-- 実験2: 鍵の再利用問題 -->
+        <div class="experiment-section" id="experiment2">
+          <div class="experiment-header accordion-header" data-experiment="2">
+            <h3>⚠️ 実験2: 鍵の再利用がもたらす脆弱性 <span class="accordion-icon">▼</span></h3>
+            <p>同じ鍵で2つの平文を暗号化すると、暗号文から平文の情報が漏洩することを実証します。</p>
+          </div>
+          
+          <div class="experiment-content" id="experiment2-content">
+
+          <div class="key-reuse-demo">
+            <div class="demo-theory">
+              <h4>📖 理論的背景</h4>
+              <div class="theory-formula">
+                <p><strong>暗号化:</strong></p>
+                <code>C₁ = P₁ ⊕ K</code><br>
+                <code>C₂ = P₂ ⊕ K</code>
+                
+                <p><strong>問題: 暗号文同士のXOR</strong></p>
+                <code>C₁ ⊕ C₂ = (P₁ ⊕ K) ⊕ (P₂ ⊕ K) = P₁ ⊕ P₂</code>
+                
+                <p class="warning-text">⚠️ 鍵Kが相殺され、平文同士のXORが得られてしまいます！</p>
+              </div>
+            </div>
+
+            <div class="reuse-simulator">
+              <h4>🎮 実証シミュレーター</h4>
+              
+              <div class="plaintext-inputs">
+                <div class="input-group">
+                  <label for="plaintext1">平文1:</label>
+                  <input type="text" id="plaintext1" value="AB" maxlength="10">
+                </div>
+                
+                <div class="input-group">
+                  <label for="plaintext2">平文2:</label>
+                  <input type="text" id="plaintext2" value="XY" maxlength="10">
+                </div>
+                
+                <button id="demonstrateReuse" class="demo-button">🔍 脆弱性を実証</button>
+              </div>
+
+              <div class="reuse-results" id="reuseResults" style="display: none;">
+                <div class="step-display">
+                  <h5>📊 計算過程</h5>
+                  
+                  <div class="calculation-step">
+                    <h6>1. 同じ鍵で暗号化</h6>
+                    <div class="bit-display-small">
+                      <div class="bit-row-small">
+                        <span class="label">平文1 (P₁):</span>
+                        <span id="p1bits" class="bits"></span>
+                      </div>
+                      <div class="bit-row-small">
+                        <span class="label">鍵K:</span>
+                        <span id="keybits" class="bits"></span>
+                      </div>
+                      <div class="bit-row-small">
+                        <span class="label">暗号文1 (C₁):</span>
+                        <span id="c1bits" class="bits"></span>
+                      </div>
+                    </div>
+                    
+                    <div class="bit-display-small">
+                      <div class="bit-row-small">
+                        <span class="label">平文2 (P₂):</span>
+                        <span id="p2bits" class="bits"></span>
+                      </div>
+                      <div class="bit-row-small">
+                        <span class="label">鍵K:</span>
+                        <span id="keybits2" class="bits"></span>
+                      </div>
+                      <div class="bit-row-small">
+                        <span class="label">暗号文2 (C₂):</span>
+                        <span id="c2bits" class="bits"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="calculation-step">
+                    <h6>2. 攻撃者による暗号文のXOR</h6>
+                    <div class="bit-display-small">
+                      <div class="bit-row-small">
+                        <span class="label">C₁ ⊕ C₂:</span>
+                        <span id="ciphertextXor" class="bits attack"></span>
+                      </div>
+                      <div class="bit-row-small">
+                        <span class="label">P₁ ⊕ P₂:</span>
+                        <span id="plaintextXor" class="bits plain"></span>
+                      </div>
+                    </div>
+                    
+                    <div class="vulnerability-highlight">
+                      <p><strong>⚠️ 結果:</strong> <span id="matchResult">一致しています！</span></p>
+                      <p>これにより攻撃者は平文の関係性を知ることができ、さらなる解析が可能になります。</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <!-- 実験3: 平文の断片からの鍵推測 -->
+        <div class="experiment-section" id="experiment3">
+          <div class="experiment-header accordion-header" data-experiment="3">
+            <h3>🕵️ 実験3: 平文の断片から鍵を特定 <span class="accordion-icon">▼</span></h3>
+            <p>平文の一部分（1ビットでも）がわかれば、対応する鍵ビットが確定的に求まることを実証します。</p>
+          </div>
+          
+          <div class="experiment-content" id="experiment3-content">
+
+          <div class="fragment-analysis">
+            <div class="analysis-theory">
+              <h4>📖 理論</h4>
+              <div class="theory-content">
+                <p><strong>XORの性質を利用:</strong></p>
+                <code>C = P ⊕ K</code> から <code>K = P ⊕ C</code>
+                
+                <p>平文の断片がわかれば、対応する暗号文ビットから鍵ビットを逆算できます。</p>
+                <div class="security-note">
+                  <strong>🛡️ OTPのセキュリティ:</strong>
+                  <p>ただし、OTPでは各鍵は一度だけ使用されるため、将来のメッセージには影響しません。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="fragment-simulator">
+              <h4>🎮 断片解析シミュレーター</h4>
+              
+              <div class="scenario-setup">
+                <div class="input-group">
+                  <label for="targetPlaintext">対象平文:</label>
+                  <input type="text" id="targetPlaintext" value="SECRET" maxlength="10">
+                  <button id="encryptTarget" class="demo-button">🔒 暗号化</button>
+                </div>
+              </div>
+
+              <div class="encrypted-display" id="encryptedDisplay" style="display: none;">
+                <h5>📤 暗号化結果</h5>
+                <div class="bit-display-small">
+                  <div class="bit-row-small">
+                    <span class="label">平文:</span>
+                    <span id="targetPlaintextBits" class="bits plain"></span>
+                  </div>
+                  <div class="bit-row-small">
+                    <span class="label">鍵:</span>
+                    <span id="targetKeyBits" class="bits key"></span>
+                  </div>
+                  <div class="bit-row-small">
+                    <span class="label">暗号文:</span>
+                    <span id="targetCipherBits" class="bits cipher"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fragment-input" id="fragmentInput" style="display: none;">
+                <h5>🕵️ 攻撃シナリオ</h5>
+                <p>攻撃者が平文の一部を知っているとします:</p>
+                
+                <div class="known-fragment">
+                  <label for="knownFragment">既知の平文断片:</label>
+                  <input type="text" id="knownFragment" maxlength="10" placeholder="例: SE">
+                  <label for="fragmentPosition">位置（文字目）:</label>
+                  <input type="number" id="fragmentPosition" min="1" max="10" value="1">
+                  <button id="analyzeFragment" class="demo-button">🔍 鍵を推測</button>
+                </div>
+              </div>
+
+              <div class="analysis-results" id="analysisResults" style="display: none;">
+                <h5>📊 解析結果</h5>
+                
+                <div class="deduced-key">
+                  <div class="bit-display-small">
+                    <div class="bit-row-small">
+                      <span class="label">既知平文:</span>
+                      <span id="knownPlaintextBits" class="bits plain"></span>
+                    </div>
+                    <div class="bit-row-small">
+                      <span class="label">対応暗号文:</span>
+                      <span id="correspondingCipherBits" class="bits cipher"></span>
+                    </div>
+                    <div class="bit-row-small">
+                      <span class="label">推測された鍵:</span>
+                      <span id="deducedKeyBits" class="bits key"></span>
+                    </div>
+                  </div>
+                  
+                  <div class="verification">
+                    <p><strong>✅ 検証:</strong></p>
+                    <p id="verificationResult">推測された鍵は実際の鍵と一致します！</p>
+                  </div>
+                  
+                  <div class="security-implications">
+                    <h6>🛡️ セキュリティへの影響</h6>
+                    <ul>
+                      <li><strong>現在のメッセージ:</strong> 残りの部分も解読可能になる</li>
+                      <li><strong>将来のメッセージ:</strong> OTPでは鍵を再利用しないため安全</li>
+                      <li><strong>教訓:</strong> 鍵の一度だけ使用が重要な理由</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="lab-conclusion">
+          <h3>🎓 実験のまとめ</h3>
+          <div class="conclusion-points">
+            <div class="point">
+              <h4>🔧 実験1の教訓</h4>
+              <p>XORは基本的な論理演算の組み合わせで構成でき、ハードウェア実装が容易です。</p>
+            </div>
+            
+            <div class="point">
+              <h4>⚠️ 実験2の教訓</h4>
+              <p>鍵の再利用は致命的な脆弱性を生み出します。OTPでは絶対に鍵を再利用してはいけません。</p>
+            </div>
+            
+            <div class="point">
+              <h4>🕵️ 実験3の教訓</h4>
+              <p>平文の断片が漏洩すると対応する鍵も漏洩しますが、OTPでは使い捨てなので将来のセキュリティには影響しません。</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <footer>
@@ -282,6 +1028,8 @@
   <script src="js/file-export.js"></script>
   <script src="js/dark-mode.js"></script>
   <script src="js/help-modal.js"></script>
+  <script src="js/xor-basics.js"></script>
+  <script src="js/otp-lab.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

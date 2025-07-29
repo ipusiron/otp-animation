@@ -953,6 +953,682 @@ body.dark-mode .help-note {
   color: #ffd700;
 }
 
+/* OTP実験室のスタイル */
+.lab-introduction {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.lab-introduction h2 {
+  margin: 0 0 1rem 0;
+  font-size: 2rem;
+}
+
+.lab-introduction p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.experiment-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.experiment-section:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+/* アコーディオンヘッダー */
+.accordion-header {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.accordion-header:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+  border-radius: 8px;
+  margin: -0.5rem;
+  padding: 0.5rem;
+}
+
+.accordion-header h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 0.5rem 0;
+  user-select: none;
+}
+
+.accordion-icon {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.accordion-header.collapsed .accordion-icon {
+  transform: rotate(-90deg);
+}
+
+/* アコーディオンコンテンツ */
+.experiment-content {
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 3000px; /* 十分に大きな値 */
+  opacity: 1;
+}
+
+.experiment-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+body.dark-mode .accordion-header:hover {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+}
+
+body.dark-mode .experiment-section {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+body.dark-mode .experiment-section:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.experiment-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.4rem;
+}
+
+body.dark-mode .experiment-header h3 {
+  color: #e0e0e0;
+}
+
+.experiment-header p {
+  margin: 0 0 1rem 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+body.dark-mode .experiment-header p {
+  color: #ccc;
+}
+
+/* 実験1: ゲート構成 */
+.gate-construction {
+  display: grid;
+  gap: 2rem;
+}
+
+.construction-theory {
+  background: #f8f9ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+body.dark-mode .construction-theory {
+  background: #1a1a2e;
+  border-left-color: #667eea;
+}
+
+.formula {
+  text-align: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .formula {
+  background: #333;
+}
+
+.formula code {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.gate-simulator {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .gate-simulator {
+  background: #333;
+}
+
+.input-controls {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.gate-input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+body.dark-mode .gate-input {
+  background: #444;
+  border-color: #666;
+  color: #e0e0e0;
+}
+
+.gate-diagram-complex {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.construction-svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible; /* ハイライト時の拡大によるはみ出しを許可 */
+}
+
+/* SVGコンテナにパディングを追加してはみ出しに対応 */
+.gate-diagram-complex {
+  padding: 10px;
+  overflow: visible;
+}
+
+/* ダークモード時のSVG要素は JavaScript側で動的に制御するため、
+   line要素の色指定を削除し、他の要素のみ対応 */
+body.dark-mode .construction-svg path,
+body.dark-mode .construction-svg rect,
+body.dark-mode .construction-svg circle {
+  stroke: #e0e0e0;
+}
+
+/* ダークモード時のSVGテキスト要素の色調整 */
+/* 動的制御されないテキスト要素（ゲート名、式説明）のみ対象 */
+body.dark-mode .construction-svg text:not([id]) {
+  fill: #e0e0e0 !important;
+}
+
+.gate-results {
+  margin-top: 2rem;
+}
+
+.result-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.result-table th,
+.result-table td {
+  padding: 0.8rem;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+/* 表のセルのホバー効果 */
+.result-table td {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.result-table td:hover {
+  background: #fff3cd;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+  border-color: #ffc107;
+  font-weight: bold;
+}
+
+body.dark-mode .result-table td:hover {
+  background: #3d2a1a;
+  border-color: #ff8c00;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.3);
+}
+
+.result-table th {
+  background: #f5f5f5;
+  font-weight: bold;
+}
+
+body.dark-mode .result-table th {
+  background: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .result-table th,
+body.dark-mode .result-table td {
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.result-cell {
+  background: #e8f5e8;
+  font-weight: bold;
+  color: #2d5016;
+}
+
+body.dark-mode .result-cell {
+  background: #1a3d1a;
+  color: #90ee90;
+}
+
+.construction-explanation {
+  background: #f0f8ff;
+  padding: 1rem;
+  border-radius: 6px;
+  border-left: 4px solid #4a90e2;
+  white-space: pre-line;
+}
+
+body.dark-mode .construction-explanation {
+  background: #1a1a3d;
+  border-left-color: #4a90e2;
+}
+
+/* 実験2: 鍵の再利用 */
+.key-reuse-demo {
+  display: grid;
+  gap: 2rem;
+}
+
+.demo-theory {
+  background: #fff8e1;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #ff9800;
+}
+
+body.dark-mode .demo-theory {
+  background: #3d2a1a;
+  border-left-color: #ff9800;
+}
+
+.theory-formula {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .theory-formula {
+  background: #333;
+}
+
+.theory-formula code {
+  display: block;
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #e65100;
+}
+
+body.dark-mode .theory-formula code {
+  color: #ff9800;
+}
+
+.warning-text {
+  color: #d32f2f;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+body.dark-mode .warning-text {
+  color: #ff5252;
+}
+
+.reuse-simulator {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .reuse-simulator {
+  background: #333;
+}
+
+.plaintext-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.demo-button {
+  grid-column: 1 / -1;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.demo-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(238, 90, 36, 0.3);
+}
+
+.reuse-results {
+  margin-top: 2rem;
+}
+
+.calculation-step {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #6c757d;
+}
+
+body.dark-mode .calculation-step {
+  background: #2a2a2a;
+  border-left-color: #6c757d;
+}
+
+.calculation-step h6 {
+  margin: 0 0 1rem 0;
+  color: #495057;
+  font-size: 1.1rem;
+}
+
+body.dark-mode .calculation-step h6 {
+  color: #e0e0e0;
+}
+
+.bit-display-small {
+  margin: 1rem 0;
+}
+
+.bit-row-small {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+  gap: 1rem;
+}
+
+.bit-row-small .label {
+  min-width: 120px;
+  font-weight: bold;
+  color: #495057;
+  display: inline-block;
+}
+
+body.dark-mode .bit-row-small .label {
+  color: #e0e0e0;
+}
+
+.bits {
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  background: #e9ecef;
+}
+
+body.dark-mode .bits {
+  background: #444;
+  color: #e0e0e0;
+}
+
+.bits.plain {
+  background: #e8f5e8;
+  color: #2d5016;
+}
+
+body.dark-mode .bits.plain {
+  background: #1a3d1a;
+  color: #90ee90;
+}
+
+.bits.key {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+body.dark-mode .bits.key {
+  background: #3d2a1a;
+  color: #ff9800;
+}
+
+.bits.cipher {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+body.dark-mode .bits.cipher {
+  background: #1a2a3d;
+  color: #64b5f6;
+}
+
+.bits.attack {
+  background: #ffebee;
+  color: #c62828;
+}
+
+body.dark-mode .bits.attack {
+  background: #3d1a1a;
+  color: #ff5252;
+}
+
+.vulnerability-highlight {
+  background: #ffebee;
+  border: 2px solid #f44336;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+body.dark-mode .vulnerability-highlight {
+  background: #3d1a1a;
+  border-color: #f44336;
+}
+
+.vulnerability-highlight p {
+  margin: 0.5rem 0;
+  color: #c62828;
+}
+
+body.dark-mode .vulnerability-highlight p {
+  color: #ff5252;
+}
+
+/* 実験3: 断片解析 */
+.fragment-analysis {
+  display: grid;
+  gap: 2rem;
+}
+
+.analysis-theory {
+  background: #f3e5f5;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #9c27b0;
+}
+
+body.dark-mode .analysis-theory {
+  background: #2d1a3d;
+  border-left-color: #9c27b0;
+}
+
+.theory-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+body.dark-mode .theory-content {
+  background: #333;
+}
+
+.security-note {
+  background: #e8f5e8;
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+body.dark-mode .security-note {
+  background: #1a3d1a;
+  border-color: #4caf50;
+}
+
+.fragment-simulator {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode .fragment-simulator {
+  background: #333;
+}
+
+.scenario-setup {
+  margin-bottom: 2rem;
+}
+
+.known-fragment {
+  display: grid;
+  grid-template-columns: auto 1fr auto 100px auto;
+  gap: 1rem;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.verification {
+  background: #e8f5e8;
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+body.dark-mode .verification {
+  background: #1a3d1a;
+  border-color: #4caf50;
+}
+
+.security-implications {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+body.dark-mode .security-implications {
+  background: #2a2a2a;
+}
+
+.security-implications h6 {
+  margin: 0 0 1rem 0;
+  color: #495057;
+}
+
+body.dark-mode .security-implications h6 {
+  color: #e0e0e0;
+}
+
+.security-implications ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.security-implications li {
+  margin: 0.5rem 0;
+  color: #6c757d;
+}
+
+body.dark-mode .security-implications li {
+  color: #ccc;
+}
+
+/* 実験のまとめ */
+.lab-conclusion {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+}
+
+.lab-conclusion h3 {
+  margin: 0 0 2rem 0;
+  text-align: center;
+  font-size: 1.8rem;
+}
+
+.conclusion-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.point {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+}
+
+.point h4 {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+}
+
+.point p {
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .plaintext-inputs {
+    grid-template-columns: 1fr;
+  }
+  
+  .input-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .known-fragment {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .conclusion-points {
+    grid-template-columns: 1fr;
+  }
+}
+
 .modal-footer a {
   color: #4a90e2;
   text-decoration: none;
@@ -968,6 +1644,767 @@ body.dark-mode .modal-footer a {
 
 body.dark-mode .modal-footer a:hover {
   color: #81c784;
+}
+
+/* XORの基礎タブスタイル */
+.xor-explanation {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.xor-explanation h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+body.dark-mode .xor-explanation h2 {
+  color: #e0e0e0;
+}
+
+.explanation-section {
+  margin-bottom: 3rem;
+  background: #f9f9f9;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .explanation-section {
+  background: #2d2d2d;
+  color: #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.explanation-section h3 {
+  color: #ff6600;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  border-bottom: 2px solid #ff6600;
+  padding-bottom: 0.5rem;
+}
+
+body.dark-mode .explanation-section h3 {
+  color: #ff8c42;
+  border-bottom-color: #ff8c42;
+}
+
+.explanation-section p {
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+/* 真理値表 */
+.truth-table-container {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.truth-table {
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .truth-table {
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.truth-table th {
+  background: #ff6600;
+  color: white;
+  padding: 1rem;
+  font-weight: bold;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.truth-table th:last-child {
+  border-right: none;
+}
+
+.truth-table th:nth-child(3) {
+  min-width: 120px;
+  width: 120px;
+}
+
+body.dark-mode .truth-table th {
+  background: #ff8c42;
+  border-right-color: rgba(255, 255, 255, 0.2);
+}
+
+.truth-table td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.truth-table td:last-child {
+  border-right: none;
+}
+
+.truth-table td:nth-child(3) {
+  min-width: 120px;
+  width: 120px;
+}
+
+body.dark-mode .truth-table td {
+  border-bottom-color: #444;
+  border-right-color: #444;
+}
+
+.truth-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* 真理値表の行ホバー効果 */
+.truth-table tbody tr {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.truth-table tbody tr:hover {
+  background: #fff3cd;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+body.dark-mode .truth-table tbody tr:hover {
+  background: #4d3d1a;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.truth-table tbody tr:hover td {
+  border-bottom-color: transparent;
+  border-right-color: rgba(255, 193, 7, 0.5);
+}
+
+body.dark-mode .truth-table tbody tr:hover td {
+  border-right-color: rgba(255, 215, 0, 0.5);
+}
+
+.truth-table tbody tr:hover td:last-child {
+  border-right-color: transparent;
+}
+
+.truth-table tbody tr:hover .bit-cell {
+  background: #ffecb3;
+  transform: scale(1.1);
+}
+
+body.dark-mode .truth-table tbody tr:hover .bit-cell {
+  background: #5d4d2a;
+}
+
+.truth-table tbody tr:hover .bit-cell.result {
+  background: #c8e6c8;
+  color: #1b5e20;
+}
+
+body.dark-mode .truth-table tbody tr:hover .bit-cell.result {
+  background: #2e5d2e;
+  color: #c8e6c8;
+}
+
+.bit-cell {
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-weight: bold;
+  font-size: 1.2rem;
+  background: #f0f0f0;
+  border-radius: 4px;
+  width: 60px;
+}
+
+body.dark-mode .bit-cell {
+  background: #404040;
+}
+
+.bit-cell.result {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+body.dark-mode .bit-cell.result {
+  background: #1a4d1a;
+  color: #a5d6a7;
+}
+
+/* 暗号例 */
+.crypto-example {
+  margin: 2rem 0;
+}
+
+.crypto-step {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  border-left: 4px solid #ff6600;
+}
+
+body.dark-mode .crypto-step {
+  background: #1a1a1a;
+  border-left-color: #ff8c42;
+}
+
+.crypto-step h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+body.dark-mode .crypto-step h4 {
+  color: #e0e0e0;
+}
+
+.bit-operation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 1.5rem;
+  font-family: 'Monaco', 'Consolas', monospace;
+  margin: 1rem 0;
+}
+
+.operand {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+.operand.plain {
+  background: #d0eaff;
+  color: #1565c0;
+}
+
+body.dark-mode .operand.plain {
+  background: #1a3d5c;
+  color: #a8c8ec;
+}
+
+.operand.key {
+  background: #ffe0cc;
+  color: #e65100;
+}
+
+body.dark-mode .operand.key {
+  background: #5c3d1a;
+  color: #f4a261;
+}
+
+.operand.cipher {
+  background: #d8ffd6;
+  color: #2e7d32;
+}
+
+body.dark-mode .operand.cipher {
+  background: #1a5c1a;
+  color: #a5d6a7;
+}
+
+.operator, .equals {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #666;
+}
+
+body.dark-mode .operator, body.dark-mode .equals {
+  color: #aaa;
+}
+
+.result {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+  border: 2px solid;
+}
+
+.key-point {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+body.dark-mode .key-point {
+  background: #4d3d1a;
+  border-color: #b8860b;
+  color: #ffd700;
+}
+
+.key-point code {
+  background: #f8f9fa;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 1.2rem;
+  color: #e83e8c;
+  margin: 0 0.5rem;
+}
+
+body.dark-mode .key-point code {
+  background: #404040;
+  color: #ff79c6;
+}
+
+/* インタラクティブデモ */
+.interactive-demo {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .interactive-demo {
+  background: #1a1a1a;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.demo-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-weight: bold;
+  color: #333;
+  font-size: 1rem;
+}
+
+body.dark-mode .input-group label {
+  color: #e0e0e0;
+}
+
+.bit-select {
+  padding: 0.8rem 1.2rem;
+  font-size: 1.2rem;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-weight: bold;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .bit-select {
+  background: #2d2d2d;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.bit-select:focus {
+  outline: none;
+  border-color: #ff6600;
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
+}
+
+.operator-display, .equals-display {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #666;
+  padding: 0.5rem;
+}
+
+body.dark-mode .operator-display, body.dark-mode .equals-display {
+  color: #aaa;
+}
+
+.result-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.xor-result {
+  background: #e8f5e8;
+  color: #2e7d32;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-size: 2rem;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-weight: bold;
+  border: 3px solid #4caf50;
+  min-width: 60px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .xor-result {
+  background: #1a4d1a;
+  color: #a5d6a7;
+  border-color: #66bb6a;
+}
+
+.demo-explanation {
+  text-align: center;
+  background: #f0f8ff;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+body.dark-mode .demo-explanation {
+  background: #1a2b3d;
+  color: #a8c8ec;
+}
+
+.demo-explanation p {
+  margin: 0;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-weight: bold;
+}
+
+/* 実用例リスト */
+.explanation-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.explanation-section li {
+  background: #fff;
+  margin-bottom: 0.8rem;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #ff6600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .explanation-section li {
+  background: #1a1a1a;
+  border-left-color: #ff8c42;
+  color: #e0e0e0;
+}
+
+/* ハードウェア関連スタイル */
+.hardware-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.benefit-item {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #4caf50;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .benefit-item {
+  background: #1a1a1a;
+  border-left-color: #66bb6a;
+  color: #e0e0e0;
+}
+
+.benefit-item h4 {
+  margin: 0 0 1rem 0;
+  color: #4caf50;
+  font-size: 1.1rem;
+}
+
+body.dark-mode .benefit-item h4 {
+  color: #66bb6a;
+}
+
+.benefit-item p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* XORゲート表示 */
+.xor-gate-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #eee;
+}
+
+body.dark-mode .xor-gate-section {
+  border-top-color: #444;
+}
+
+.logic-gate-display {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.gate-diagram {
+  flex-shrink: 0;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .gate-diagram {
+  background: #1a1a1a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .gate-diagram svg path,
+body.dark-mode .gate-diagram svg line {
+  stroke: #e0e0e0;
+}
+
+body.dark-mode .gate-diagram svg text {
+  fill: #e0e0e0;
+}
+
+.gate-explanation {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* 数学的性質 */
+.mathematical-properties {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.property-item {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 2px solid #e3f2fd;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .property-item {
+  background: #1a1a1a;
+  border-color: #1a3d5c;
+  color: #e0e0e0;
+}
+
+.property-item:hover {
+  border-color: #2196f3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+}
+
+body.dark-mode .property-item:hover {
+  border-color: #64b5f6;
+  box-shadow: 0 4px 12px rgba(100, 181, 246, 0.2);
+}
+
+.property-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2196f3;
+  font-size: 1rem;
+}
+
+body.dark-mode .property-item h4 {
+  color: #64b5f6;
+}
+
+.property-item code {
+  display: block;
+  background: #f8f9fa;
+  padding: 0.8rem;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 1.1rem;
+  color: #d63384;
+  margin: 0.5rem 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+body.dark-mode .property-item code {
+  background: #404040;
+  color: #ff79c6;
+}
+
+.property-item p {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+body.dark-mode .property-item p {
+  color: #aaa;
+}
+
+.key-insight {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffecb3 100%);
+  border: 2px solid #ff9800;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+body.dark-mode .key-insight {
+  background: linear-gradient(135deg, #4d3d1a 0%, #5d4d2a 100%);
+  border-color: #ffb74d;
+  color: #ffd700;
+}
+
+/* 応用分野グリッド */
+.application-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.app-item {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-top: 4px solid #ff6600;
+}
+
+body.dark-mode .app-item {
+  background: #1a1a1a;
+  border-top-color: #ff8c42;
+  color: #e0e0e0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.app-item h4 {
+  margin: 0 0 1.5rem 0;
+  color: #ff6600;
+  font-size: 1.2rem;
+}
+
+body.dark-mode .app-item h4 {
+  color: #ff8c42;
+}
+
+.app-item ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.app-item li {
+  background: #f8f9fa;
+  margin-bottom: 0.8rem;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+  border-left: 3px solid #ff6600;
+  font-size: 0.95rem;
+}
+
+body.dark-mode .app-item li {
+  background: #2d2d2d;
+  border-left-color: #ff8c42;
+  color: #e0e0e0;
+}
+
+/* 論理演算比較表 */
+.logic-comparison {
+  margin: 2rem 0;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .comparison-table {
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+
+.comparison-table th {
+  background: #2196f3;
+  color: white;
+  padding: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+body.dark-mode .comparison-table th {
+  background: #1976d2;
+}
+
+.comparison-table td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.comparison-table td:last-child {
+  border-right: none;
+}
+
+body.dark-mode .comparison-table td {
+  border-bottom-color: #444;
+  border-right-color: #444;
+}
+
+.comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table .highlight-row {
+  background: #fff3e0;
+}
+
+body.dark-mode .comparison-table .highlight-row {
+  background: #4d3d1a;
+}
+
+.comparison-table .highlight-row td {
+  font-weight: bold;
+}
+
+.comparison-table tbody tr:hover {
+  background: #f5f5f5;
+}
+
+body.dark-mode .comparison-table tbody tr:hover {
+  background: #2d2d2d;
+}
+
+.comparison-table tbody tr.highlight-row:hover {
+  background: #ffecb3;
+}
+
+body.dark-mode .comparison-table tbody tr.highlight-row:hover {
+  background: #5d4d2a;
 }
 
 /* レスポンシブ対応 */

@@ -106,6 +106,12 @@ function animateEncryption(plainBits, keyBitsInput, cipherBitsInput) {
 // 進捗表示を更新
 function updateEncryptProgress(current, total) {
   document.getElementById('encryptProgress').textContent = `${current} / ${total}`;
+  
+  // 暗号化完了時にエクスポートボタンを有効化
+  const exportButton = document.getElementById('exportEncryption');
+  if (exportButton) {
+    exportButton.disabled = current < total;
+  }
 }
 
 // 暗号化ボタンの状態を更新
@@ -134,7 +140,7 @@ function updateEncryptButtonStates() {
   document.getElementById('encryptReset').disabled = false; // 鍵生成後は常に有効
   document.getElementById('encryptStepBack').disabled = currentIndex <= 0 || isPlaying;
   document.getElementById('encryptStepForward').disabled = currentIndex >= totalBits || isPlaying;
-  document.getElementById('encryptComplete').disabled = currentIndex >= totalBits || isPlaying;
+  document.getElementById('encryptComplete').disabled = !hasStarted || currentIndex >= totalBits || isPlaying; // 開始前は無効
   document.getElementById('encryptSpeed').disabled = false; // 常に有効
 }
 
@@ -316,6 +322,10 @@ function setupEncryptionHandlers() {
       encryptAnimationState.keysGenerated = false;
       encryptAnimationState.currentIndex = 0;
       updateEncryptButtonStates();
+      
+      // エクスポートボタンを無効化
+      const exportButton = document.getElementById('exportEncryption');
+      if (exportButton) exportButton.disabled = true;
     } else {
       console.log(`📝 平文入力: "${text}" → ${bits.length}ビット [${bits.join('')}]`);
       errorArea.textContent = '';
@@ -326,6 +336,10 @@ function setupEncryptionHandlers() {
       encryptAnimationState.keysGenerated = false;
       encryptAnimationState.currentIndex = 0;
       updateEncryptButtonStates();
+      
+      // エクスポートボタンを無効化
+      const exportButton = document.getElementById('exportEncryption');
+      if (exportButton) exportButton.disabled = true;
     }
   });
 
@@ -364,6 +378,10 @@ function setupEncryptionHandlers() {
     encryptAnimationState.currentIndex = 0;
     updateEncryptButtonStates();
     updateEncryptProgress(0, plainBits.length);
+    
+    // エクスポートボタンを無効化（まだ暗号化完了していない）
+    const exportButton = document.getElementById('exportEncryption');
+    if (exportButton) exportButton.disabled = true;
   });
 
   // 🔘 暗号化開始ボタン

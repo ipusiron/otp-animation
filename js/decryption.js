@@ -42,7 +42,7 @@ function updateDecryptButtonStates() {
   document.getElementById('decryptReset').disabled = false;
   document.getElementById('decryptStepBack').disabled = currentIndex <= 0 || isPlaying;
   document.getElementById('decryptStepForward').disabled = currentIndex >= totalBits || isPlaying;
-  document.getElementById('decryptComplete').disabled = currentIndex >= totalBits || isPlaying;
+  document.getElementById('decryptComplete').disabled = !hasStarted || currentIndex >= totalBits || isPlaying; // 開始前は無効
   document.getElementById('decryptSpeed').disabled = false;
 }
 
@@ -57,11 +57,27 @@ function animateDecryption(cipherBits, keyBitsInput, decryptedBitsInput) {
     renderPlaceholderDecryptedBits(cipherBits.length);
   }
 
-  let index = 0;
+  // アニメーション状態を初期化
+  decryptAnimationState.isPlaying = true;
+  decryptAnimationState.isPaused = false;
+  decryptAnimationState.currentIndex = 0;
+  decryptAnimationState.totalBits = cipherBits.length;
+
+  // ボタン状態を更新
+  document.getElementById('decryptPlayPause').textContent = '⏸ 一時停止';
+  updateDecryptProgress(0, cipherBits.length);
+  updateDecryptButtonStates();
 
   function step() {
-    if (index >= cipherBits.length) return;
+    if (!decryptAnimationState.isPlaying || decryptAnimationState.isPaused) return;
+    if (decryptAnimationState.currentIndex >= cipherBits.length) {
+      decryptAnimationState.isPlaying = false;
+      document.getElementById('decryptPlayPause').textContent = '▶ 再生';
+      updateDecryptButtonStates();
+      return;
+    }
 
+    const index = decryptAnimationState.currentIndex;
     const cipherSpan = document.querySelector(`#ciphertextBitsContainer .bit[data-index='${index}']`);
     const keySpan = document.querySelector(`#decryptKeyBitsContainer .bit[data-index='${index}']`);
     const decryptedSpan = document.querySelector(`#decryptedBitsContainer .bit[data-index='${index}']`);
@@ -87,8 +103,12 @@ function animateDecryption(cipherBits, keyBitsInput, decryptedBitsInput) {
         }, 300);
       }, 500);
 
-      index++;
-      setTimeout(step, decryptAnimationState.speed);
+      // 進捗を更新
+      decryptAnimationState.currentIndex++;
+      updateDecryptProgress(decryptAnimationState.currentIndex, cipherBits.length);
+      updateDecryptButtonStates();
+
+      decryptAnimationState.timeoutId = setTimeout(step, decryptAnimationState.speed);
     }, 100);
   }
 
@@ -135,6 +155,10 @@ function setupDecryptionHandlers() {
     decryptAnimationState.totalBits = cipherTextBits.length;
     decryptAnimationState.currentIndex = 0;
     updateDecryptButtonStates();
+    
+    // エクスポートボタンを無効化（まだ復号完了していない）
+    const exportButton = document.getElementById('exportDecryption');
+    if (exportButton) exportButton.disabled = true;
   });
 
   // 暗号文リアルタイム入力処理
@@ -158,6 +182,10 @@ function setupDecryptionHandlers() {
       decryptAnimationState.keysGenerated = false;
       decryptAnimationState.currentIndex = 0;
       updateDecryptButtonStates();
+      
+      // エクスポートボタンを無効化
+      const exportButton = document.getElementById('exportDecryption');
+      if (exportButton) exportButton.disabled = true;
     }
   });
 
@@ -195,6 +223,10 @@ function setupDecryptionHandlers() {
     decryptAnimationState.totalBits = cipherTextBits.length;
     decryptAnimationState.currentIndex = 0;
     updateDecryptButtonStates();
+    
+    // エクスポートボタンを無効化（まだ復号完了していない）
+    const exportButton = document.getElementById('exportDecryption');
+    if (exportButton) exportButton.disabled = true;
   });
 
   // 復号開始ボタン
@@ -203,6 +235,8 @@ function setupDecryptionHandlers() {
     
     console.log(`▶️ 復号アニメーション開始: ${cipherTextBits.length}ステップ`);
     
+    // アニメーションをリセット
+    resetDecryptionAnimation();
     animateDecryption(cipherTextBits, decryptKeyBits, decryptedTextBits);
   });
 }
@@ -399,6 +433,12 @@ function executeSilentDecryptStep(index) {
 // 復号進捗表示を更新
 function updateDecryptProgress(current, total) {
   document.getElementById('decryptProgress').textContent = `${current} / ${total}`;
+  
+  // 復号完了時にエクスポートボタンを有効化
+  const exportButton = document.getElementById('exportDecryption');
+  if (exportButton) {
+    exportButton.disabled = current < total;
+  }
 }
 
 // 復号ビットの視覚状態をリセット

@@ -16,6 +16,12 @@ window.addEventListener('DOMContentLoaded', () => {
   
   // ヘルプモーダル機能を初期化
   setupHelpModalHandlers();
+  
+  // XORの基礎タブ機能を初期化
+  setupXORBasicsHandlers();
+  
+  // OTP実験室タブ機能を初期化
+  setupOTPLabHandlers();
 
   const input = document.getElementById('plaintext');
   const text = input.value;
@@ -35,4 +41,10 @@ window.addEventListener('DOMContentLoaded', () => {
   // 初期状態でボタン状態を更新
   updateEncryptButtonStates();
   updateDecryptButtonStates();
+  
+  // 初期状態でエクスポートボタンを無効化
+  const exportEncryptionBtn = document.getElementById('exportEncryption');
+  const exportDecryptionBtn = document.getElementById('exportDecryption');
+  if (exportEncryptionBtn) exportEncryptionBtn.disabled = true;
+  if (exportDecryptionBtn) exportDecryptionBtn.disabled = true;
 });
