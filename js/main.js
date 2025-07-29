@@ -9,6 +9,10 @@ window.addEventListener('DOMContentLoaded', () => {
   setupEncryptionHandlers();
   setupBitCopyButtons();
   setupFileExportHandlers();
+  
+  // ダークモード機能を初期化
+  initializeDarkMode();
+  setupDarkModeHandlers();
 
   const input = document.getElementById('plaintext');
   const text = input.value;
