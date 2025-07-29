@@ -63,6 +63,29 @@ h1 {
   color: white;
 }
 
+.export-btn {
+  display: inline-block;
+  margin-left: 0.5rem;
+  background: #e8f5e8;
+  border: 2px solid #4caf50;
+  color: #2e7d32;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  background: #4caf50;
+  color: white;
+}
+
+.export-btn:disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  border-color: #ddd;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* ビット列の表示 */
 .bit-display {
   display: flex;

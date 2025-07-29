@@ -26,6 +26,7 @@
           <div id="errorMessage" class="error-message"></div>
           <button id="generateKey">🔑 鍵を生成</button>
           <button id="startAnimation">▶ 暗号化開始</button>
+          <button id="exportEncryption" class="export-btn">📄 結果を出力</button>
         </div>
         
         <div class="animation-controls" id="encryptAnimationControls" style="display: none;">
@@ -89,6 +90,7 @@
           <div id="decryptErrorMessage" class="error-message"></div>
           <button id="generateDecryptKey">🔑 鍵を入力</button>
           <button id="startDecryption">▶ 復号開始</button>
+          <button id="exportDecryption" class="export-btn">📄 結果を出力</button>
         </div>
         
         <div class="animation-controls" id="decryptAnimationControls" style="display: none;">
@@ -169,6 +171,7 @@
   <script src="js/encryption.js"></script>
   <script src="js/decryption.js"></script>
   <script src="js/clipboard.js"></script>
+  <script src="js/file-export.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setupDecryptionControls();
   setupEncryptionHandlers();
   setupBitCopyButtons();
+  setupFileExportHandlers();
 
   const input = document.getElementById('plaintext');
   const text = input.value;
