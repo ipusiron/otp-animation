@@ -1,3 +1,40 @@
+<!--
+---
+id: day029
+slug: otp-animation
+
+title: "OTP Animation"
+
+subtitle_ja: "OTP（One-Time Pad）のアニメーションツール"
+subtitle_en: "One-Time Pad Encryption Animation Tool"
+
+description_ja: "ワンタイムパッド暗号の仕組みをビット単位のXOR演算アニメーションで視覚的に学習できる教育ツール。鍵の使い捨てを炎エフェクトで表現し、XORゲートシミュレーターや鍵再利用の脆弱性実証など対話的な実験機能も搭載。"
+description_en: "An educational tool for visually learning One-Time Pad encryption through bit-level XOR animation. Features burn effects for key consumption, XOR gate simulator, and interactive experiments demonstrating key reuse vulnerabilities."
+
+category_ja:
+  - 古典暗号
+  - 現代暗号
+category_en:
+  - Crassical Cryptography
+  - Modern Cryptograhpy
+
+difficulty: 2
+
+tags:
+  - OTP
+  - One-Time Pad
+  - XOR
+  - 古典暗号
+  - アニメーション
+  - ビット演算
+
+repo_url: "https://github.com/ipusiron/otp-animation"
+demo_url: "https://ipusiron.github.io/otp-animation/"
+
+hub: true
+---
+-->
+
 # OTP Animation - OTP（One-Time Pad）のアニメーションツール
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/ipusiron/otp-animation?style=social)

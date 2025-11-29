@@ -53,9 +53,15 @@ The application uses a modular JavaScript architecture with separate files for d
 - Dark mode auto-detection with system preference support
 - LocalStorage for persistent settings
 
+## Custom Slash Commands
+
+- `/reload-workspace` - Re-read all source files and detect changes
+- `/annotate` - Add Japanese comments to code blocks
+
 ## Development Notes
 
 - The codebase is intentionally simple with no external dependencies
 - All UI text is in Japanese as this is an educational tool for Japanese users
 - The burn effect on key bits is visual only - bits remain readable after use (intentional design)
 - Uses vanilla JavaScript with ES6+ features (async/await, modules, arrow functions)
+- See `TECHNICAL.md` for detailed implementation notes on clipboard API fallbacks and supported bit string formats
