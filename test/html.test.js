@@ -73,3 +73,19 @@ test('saved dark root class styles the body before application initialization', 
 test('noninteractive toast does not intercept header controls', () => {
   assert.match(read('style.css'), /\.toast\s*\{[^}]*pointer-events: none;/);
 });
+
+test('crib experiment exposes controls and safe output containers', () => {
+  for (const id of ['experiment4', 'experiment4-content', 'cribEncrypt', 'cribInput', 'cribSearch', 'cribRows',
+    'cribAssembly1', 'cribAssembly2', 'cribUndo', 'cribClear', 'cribCustom', 'cribReadable']) {
+    assert.match(read('index.html'), new RegExp(`id="${id}"`));
+  }
+  assert.doesNotMatch(read('js/otp-lab.js'), /innerHTML|console\.log|\.style\./);
+});
+
+test('secrecy and tampering expose labelled controls and preserve secret-key separation', () => {
+  for (const id of ['experiment5', 'experiment6', 'secrecyPlain', 'secrecyAlternate', 'secrecyEncrypt', 'secrecyKey',
+    'secrecyDecoded', 'tamperPlain', 'tamperEncrypt', 'tamperPosition', 'tamperKnown', 'tamperTarget', 'tamperFlip',
+    'tamperDelta', 'tamperDecoded', 'tamperKeyDetails']) assert.ok(read('index.html').includes(`id="${id}"`), id);
+  assert.match(read('index.html'), /<details id="tamperKeyDetails">/);
+  assert.match(read('js/otp-lab.js'), /OtpCore\.flip\(tamperState\.cipher, position - 1, known, target\)/);
+});

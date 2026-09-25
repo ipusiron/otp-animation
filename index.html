@@ -907,6 +907,115 @@
           </div>
         </div>
 
+        <div class="experiment-section" id="experiment4">
+          <div class="experiment-header accordion-header" data-experiment="4">
+            <h3><span data-i18n="crib.title">🧩 実験4: クリブ・ドラッグ（同じ鍵を2回使うと読める）</span><span class="accordion-icon">▼</span></h3>
+          </div>
+          <div class="experiment-content advanced-lab" id="experiment4-content">
+            <p data-i18n="crib.intro"></p>
+            <p data-i18n="crib.history"></p>
+            <label class="lab-check"><input type="checkbox" id="cribCustom"><span data-i18n="crib.custom"></span></label>
+            <div id="cribCustomInputs" hidden>
+              <label for="cribPlain1" data-i18n="crib.plain1"></label>
+              <input type="text" id="cribPlain1" maxlength="64">
+              <label for="cribPlain2" data-i18n="crib.plain2"></label>
+              <input type="text" id="cribPlain2" maxlength="64">
+            </div>
+            <button type="button" id="cribEncrypt" class="demo-button" data-i18n="crib.encrypt"></button>
+            <p id="cribLength" role="status"></p>
+            <dl class="lab-hex">
+              <dt>C₁</dt><dd id="cribC1"></dd>
+              <dt>C₂</dt><dd id="cribC2"></dd>
+              <dt>C₁ ⊕ C₂</dt><dd id="cribX"></dd>
+            </dl>
+            <p data-i18n="crib.cancel"></p>
+            <label for="cribInput" data-i18n="crib.input"></label>
+            <input type="text" id="cribInput" value=" THE " maxlength="20">
+            <button type="button" id="cribSearch" class="demo-button" data-i18n="crib.search" disabled></button>
+            <p id="cribError" class="lab-error" role="alert"></p>
+            <label class="lab-check"><input type="checkbox" id="cribReadable" checked><span data-i18n="crib.readableOnly"></span></label>
+            <div class="table-scroll" tabindex="0" role="region" data-i18n-aria-label="crib.candidates">
+              <table class="crib-table">
+                <thead><tr>
+                  <th scope="col" data-i18n="crib.position"></th><th scope="col" data-i18n="crib.fragment"></th>
+                  <th scope="col" data-i18n="crib.readable"></th><th scope="col" data-i18n="crib.placement"></th>
+                </tr></thead>
+                <tbody id="cribRows"></tbody>
+              </table>
+            </div>
+            <h4 data-i18n="crib.assembly"></h4>
+            <p data-i18n="crib.plain1"></p><pre class="lab-bytes" id="cribAssembly1"></pre>
+            <p data-i18n="crib.plain2"></p><pre class="lab-bytes" id="cribAssembly2"></pre>
+            <p id="cribKnown" role="status"></p><p id="cribConflict" class="lab-error" role="status"></p>
+            <p id="cribComplete" role="status"></p>
+            <button type="button" id="cribUndo" data-i18n="crib.undo" disabled></button>
+            <button type="button" id="cribClear" data-i18n="crib.clear" disabled></button>
+            <details id="cribAnswers"><summary data-i18n="crib.answers"></summary>
+              <pre class="lab-bytes" id="cribAnswer1"></pre><pre class="lab-bytes" id="cribAnswer2"></pre>
+            </details>
+            <details><summary data-i18n="crib.hints"></summary><ol>
+              <li data-i18n="crib.hint1"></li><li data-i18n="crib.hint2"></li><li data-i18n="crib.hint3"></li>
+            </ol></details>
+          </div>
+        </div>
+
+        <div class="experiment-section" id="experiment5">
+          <div class="experiment-header accordion-header" data-experiment="5">
+            <h3><span data-i18n="secrecy.title"></span><span class="accordion-icon">▼</span></h3>
+          </div>
+          <div class="experiment-content advanced-lab" id="experiment5-content">
+            <p data-i18n="secrecy.intro"></p>
+            <label for="secrecyPlain" data-i18n="secrecy.plain"></label>
+            <input type="text" id="secrecyPlain" value="ATTACK AT DAWN">
+            <button type="button" id="secrecyEncrypt" class="demo-button" data-i18n="advanced.encrypt"></button>
+            <dl class="lab-hex"><dt data-i18n="advanced.cipher"></dt><dd id="secrecyCipher"></dd></dl>
+            <label for="secrecyAlternate" data-i18n="secrecy.alternate"></label>
+            <input type="text" id="secrecyAlternate" value="RETREAT AT SIX">
+            <p id="secrecyError" class="lab-error" role="alert"></p>
+            <dl class="lab-hex">
+              <dt data-i18n="secrecy.key"></dt><dd id="secrecyKey"></dd>
+              <dt data-i18n="secrecy.decoded"></dt><dd id="secrecyDecoded" role="status"></dd>
+            </dl>
+            <p data-i18n="secrecy.summary"></p>
+            <details><summary data-i18n="crib.hints"></summary>
+              <p data-i18n="secrecy.hint"></p>
+              <button type="button" id="secrecyJapanese" data-i18n="secrecy.japanese"></button>
+            </details>
+          </div>
+        </div>
+
+        <div class="experiment-section" id="experiment6">
+          <div class="experiment-header accordion-header" data-experiment="6">
+            <h3><span data-i18n="tamper.title"></span><span class="accordion-icon">▼</span></h3>
+          </div>
+          <div class="experiment-content advanced-lab" id="experiment6-content">
+            <p data-i18n="tamper.intro"></p>
+            <h4 data-i18n="tamper.sender"></h4>
+            <label for="tamperPlain" data-i18n="tamper.plain"></label>
+            <input type="text" id="tamperPlain" value="PAY 100 YEN TO BOB" maxlength="64">
+            <button type="button" id="tamperEncrypt" class="demo-button" data-i18n="advanced.encrypt"></button>
+            <dl class="lab-hex"><dt data-i18n="advanced.cipher"></dt><dd id="tamperCipher"></dd></dl>
+            <p data-i18n="tamper.secret"></p>
+            <details id="tamperKeyDetails"><summary data-i18n="tamper.key"></summary><pre class="lab-bytes" id="tamperKey"></pre></details>
+            <h4 data-i18n="tamper.attacker"></h4>
+            <label for="tamperPosition" data-i18n="crib.position"></label>
+            <input type="number" id="tamperPosition" value="5" min="1" max="64" step="1">
+            <label for="tamperKnown" data-i18n="tamper.known"></label>
+            <input type="text" id="tamperKnown" value="100" maxlength="64">
+            <label for="tamperTarget" data-i18n="tamper.target"></label>
+            <input type="text" id="tamperTarget" value="900" maxlength="64">
+            <button type="button" id="tamperFlip" class="demo-button" data-i18n="tamper.flip" disabled></button>
+            <p id="tamperError" class="lab-error" role="alert"></p>
+            <dl class="lab-hex">
+              <dt data-i18n="tamper.changed"></dt><dd id="tamperChanged"></dd>
+              <dt data-i18n="tamper.delta"></dt><dd id="tamperDelta"></dd>
+            </dl>
+            <h4 data-i18n="tamper.receiver"></h4>
+            <pre class="lab-bytes" id="tamperDecoded" role="status"></pre>
+            <p data-i18n="tamper.summary"></p>
+          </div>
+        </div>
+
         <div class="lab-conclusion">
           <h3 data-i18n="ui.183">🎓 実験のまとめ</h3>
           <div class="conclusion-points">
@@ -1019,6 +1128,9 @@
             <li><strong data-i18n="ui.255">鍵推測</strong><span data-i18n="ui.256">: 既知の平文断片から鍵ビットを計算</span></li>
             <li><strong>K = P ⊕ C</strong><span data-i18n="ui.257">: 基本的な暗号解析手法の実演</span></li>
           </ul>
+          <h4 data-i18n="crib.title"></h4><p data-i18n="help.crib"></p>
+          <h4 data-i18n="secrecy.title"></h4><p data-i18n="help.secrecy"></p>
+          <h4 data-i18n="tamper.title"></h4><p data-i18n="help.tamper"></p>
         </div>
 
         <div class="help-section">
@@ -1056,7 +1168,7 @@
         <div class="help-section">
           <h3 data-i18n="ui.285">🔗 技術情報</h3>
           <ul>
-            <li><strong data-i18n="ui.286">対応文字</strong><span data-i18n="ui.287">: UTF-8で64バイトまで。実験室はASCII 32〜126</span></li>
+            <li><strong data-i18n="ui.286">対応文字</strong><span data-i18n="ui.287">: UTF-8で64バイトまで。実験2〜4・6はASCII 32〜126、実験5はUTF-8</span></li>
             <li><strong data-i18n="ui.288">ビット表現</strong><span data-i18n="ui.289">: 1バイト8ビット、上位ビットから表示。1文字が複数バイトになる場合あり</span></li>
             <li><strong data-i18n="ui.290">ブラウザー要件</strong><span data-i18n="ui.291">: TextEncoder・TextDecoder・crypto.getRandomValuesに対応したブラウザー</span></li>
             <li><strong data-i18n="ui.292">入力上限</strong><span data-i18n="ui.293">: UTF-8で64バイト</span></li>

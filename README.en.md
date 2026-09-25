@@ -11,7 +11,7 @@
 **Day029 - 100 Security Tools with Generative AI**
 
 OTP Animation teaches the one-time pad through bit-by-bit XOR and a burning-key animation.
-It supports UTF-8 text, including Japanese and emoji, with four tabs and three experiments in Japanese and English.
+It supports UTF-8 text, including Japanese and emoji, with four tabs and six experiments in Japanese and English.
 
 ## 🌐 Demo
 
@@ -31,6 +31,14 @@ Light Japanese UI: received ciphertext and key, and the recovered plaintext, aft
 
 Dark English UI: Experiment 2 with HELLO and WORLD, showing C₁⊕C₂＝P₁⊕P₂. 1280×1200, 53,826 bytes.
 
+![Crib candidates and assembled plaintexts](assets/screenshot4.png)
+
+Light Japanese UI: Experiment 4, placing “ THE ” into plaintext 1 at position 11 and plaintext 2 at position 21. 1280×1000, 41,841 bytes.
+
+![Tampering changes the amount to 900](assets/screenshot5.png)
+
+Light Japanese UI: Experiment 6, with difference 08 at byte 5 and PAY 900 YEN TO BOB received. 1280×1000, 60,998 bytes.
+
 ## ✨ Features
 
 - UTF-8 plaintext up to 64 bytes, grouped by character with hexadecimal and bit views
@@ -39,7 +47,10 @@ Dark English UI: Experiment 2 with HELLO and WORLD, showing C₁⊕C₂＝P₁�
 - Decryption from hexadecimal ciphertext and key; invalid UTF-8 shown with replacement characters and a note
 - Bit-string copy and paste, and text-file result exports
 - Japanese/English switching that preserves state, plus persistent light and dark themes
-- XOR basics and three experiments: gate construction, key reuse and known-plaintext fragments
+- XOR basics and experiments in gate construction, key reuse and known-plaintext fragments
+- Experiment 4: find crib-dragging candidates and assemble two plaintexts
+- Experiment 5: demonstrate perfect secrecy by deriving keys for alternative plaintexts from the same ciphertext
+- Experiment 6: change an amount or recipient by flipping ciphertext bits without the key
 
 The burning animation is a visual effect. It does not securely erase keys.
 
@@ -74,8 +85,15 @@ Changing input A or B updates the result and explanation.
 - Experiment 1: construct XOR from NOT, AND and OR gates; inspect changing wires and table values
 - Experiment 2: encrypt two plaintexts with one key and verify C₁⊕C₂＝P₁⊕P₂; unequal texts are shortened with a length note
 - Experiment 3: enter a known plaintext fragment and a one-based position; recover only the corresponding key fragment and compare it with the actual key
+- Experiment 4: select “🔀 Encrypt with a New Key”, try “ THE ” (with surrounding spaces) at every position, then place it in plaintext 1 at position 11 and plaintext 2 at position 21; undo, clear, hints and answers are available
+- Experiment 5: encrypt the default ATTACK AT DAWN with “🔑 Generate Key and Encrypt”, then enter RETREAT AT SIX or 撤退せよ!! as the alternative; both occupy 14 bytes, and the displayed key decrypts to that alternative
+- Experiment 6: encrypt the default PAY 100 YEN TO BOB, then use position 5, 100→900 and “✂️ Rewrite Ciphertext”; position 16, BOB→EVE changes the recipient
 
-The lab accepts ASCII code points 32–126 only. This is separate from UTF-8 support in the encryption and decryption tabs.
+Text inputs in experiments 2–4 and 6 accept ASCII code points 32–126. Experiment 5 supports UTF-8 like the encryption and decryption tabs.
+Experiment 4 accepts two custom messages of up to 64 characters each and cribs of 1–20 characters. Unequal messages use the shorter length.
+Matching both sample plaintexts displays completion. Readability alone does not prove a guess correct: test neighboring words.
+Experiment 5 accepts up to 64 bytes. Experiment 6 accepts up to 64 plaintext characters and checks fragment lengths and positions.
+Editing plaintext clears previous ciphertext, keys and results. Folding experiments and switching languages preserve results.
 
 ### Additional controls
 
@@ -89,6 +107,9 @@ Tab stays inside the help dialog. Escape closes it and returns focus to the orig
 The one-time pad (OTP) encrypts plaintext by XORing it with a key.
 Perfect secrecy requires all four conditions: a truly random key, the same length as the plaintext, used exactly once, and kept secret.
 Securely distributing and storing large amounts of key material is difficult, so modern cryptographic schemes are preferred for many uses.
+
+Under all four conditions, every plaintext of the same length has a corresponding key, so ciphertext alone cannot select the original plaintext (Experiment 5).
+This protects confidentiality, not integrity. Detecting changes such as those in Experiment 6 requires a message authentication code or authenticated encryption such as AES-GCM.
 
 ### Origin of the name
 
@@ -107,6 +128,7 @@ Some literature uses “Vernam cipher” to mean OTP, so examine the key conditi
 In early 1942, amid disruption caused by the German invasion, Soviet cryptographic production duplicated about 35,000 pages of key material and distributed the copies to geographically separated users.
 Duplicate keys in communications involving the NKVD/NKGB (later the KGB), GRU and other organizations provided the opening exploited by VENONA.
 Only a small fraction of the traffic was decrypted. This did not break the perfect secrecy of correctly used OTP.
+Experiment 4 demonstrates the idea of guessing words and assembling plaintexts after key reuse.
 See the primary source, [NSA Cryptologic Almanac: VENONA: An Overview](https://www.nsa.gov/Portals/70/documents/news-features/declassified-documents/crypto-almanac-50th/VENONA_An_Overview.pdf).
 
 ### From Caesar to OTP
@@ -155,6 +177,48 @@ The following known answers use a deterministic test key: byte i is (i×73+41)&2
 
 Tests recalculate every cell using OtpCore. See [TECHNICAL.md](TECHNICAL.md) for implementation details.
 
+### Known Answers for Experiments 4–6
+
+These reference values use the same deterministic test key. Never use test keys for actual encryption.
+The UI generates fresh random keys, so ciphertext varies while candidates, recovered messages and tampering differences remain the same.
+
+<!-- lab-sample -->
+| Plaintext | Sample message | Bytes |
+|---|---|---|
+| 1 | `MEET ME AT THE NORTH GATE AT NOON` | 33 |
+| 2 | `THE PACKAGE IS UNDER THE OLD OAK.` | 33 |
+
+C₁⊕C₂ is always `19 0D 00 74 70 0C 06 6B 00 13 65 74 01 16 00 1B 01 16 11 1A 00 13 09 11 65 6F 0D 10 00 01 0E 04 60`, independent of the key.
+Of the 29 positions tested for “ THE ”, three are readable. Spaces inside the quotation marks are part of the text.
+Positions are one-based. Position 5 is a coincidental false positive; placing the crib in plaintext 1 at position 11 and plaintext 2 at position 21 matches the sample.
+
+<!-- lab-crib -->
+| Position | Crib | Other plaintext fragment |
+|---|---|---|
+| 5 | `" THE "` | `"PXN. "` |
+| 11 | `" THE "` | `"E IS "` |
+| 21 | `" THE "` | `" GATE"` |
+
+Experiment 5 keeps the ciphertext of ATTACK AT DAWN fixed and derives a key for each alternative plaintext.
+
+<!-- lab-secrecy -->
+| Decrypted plaintext | Key | Shared ciphertext |
+|---|---|---|
+| `ATTACK AT DAWN` | 29 72 BB 04 4D 96 DF 28 71 BA 03 4C 95 DE | 68 26 EF 45 0E DD FF 69 25 9A 47 0D C2 90 |
+| `RETREAT AT SIX` | 3A 63 BB 17 4B 9C AB 49 64 CE 67 5E 8B C8 | 68 26 EF 45 0E DD FF 69 25 9A 47 0D C2 90 |
+| `撤退せよ!!` | 8E B4 4B AC 8E 5D 1C E8 BE 79 C5 85 E3 B1 | 68 26 EF 45 0E DD FF 69 25 9A 47 0D C2 90 |
+
+Experiment 6 starts with PAY 100 YEN TO BOB. The receiver decrypts every ciphertext with the same real key.
+
+<!-- lab-tamper -->
+| Position (from 1) | Known fragment | Replacement | Ciphertext | Receiver's plaintext |
+|---|---|---|---|---|
+| - | - | - | 79 33 E2 24 7C A6 EF 08 28 FF 4D 6C C1 91 07 32 F6 40 | `PAY 100 YEN TO BOB` |
+| 5 | 100 | 900 | 79 33 E2 24 74 A6 EF 08 28 FF 4D 6C C1 91 07 32 F6 40 | `PAY 900 YEN TO BOB` |
+| 16 | BOB | EVE | 79 33 E2 24 7C A6 EF 08 28 FF 4D 6C C1 91 07 35 EF 47 | `PAY 100 YEN TO EVE` |
+
+The difference for 100→900 is `00 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 00 00`: only byte 5 changes.
+
 ## 🔒 Security
 
 This is an educational demonstration, not a tool for protecting real data or securely distributing and erasing keys.
@@ -189,6 +253,7 @@ npm test
 ```
 
 - core.test.js: six known answers, validation, 200 UTF-8 round trips, hexadecimal/binary round trips and weak RNG prohibition
+- Additional core.test.js checks: five crib searches, assembly and conflicts, secrecy/tampering known answers, and 100 property cases each for key derivation and tampering
 - i18n.test.js: matching dictionary keys, nonempty values, key usage, placeholders and Japanese literals
 - html.test.js: CSP, ARIA, prohibited inline operations, early theme and noninteractive toasts
 - contrast.test.js: light and dark text/background ratios of at least 4.5:1
@@ -217,7 +282,9 @@ otp-animation/                   # Project root
 ├── assets/                      # README screenshots
 │   ├── screenshot.png           # OTP暗号 encryption after 40 bits
 │   ├── screenshot2.png          # Completed decryption of received ciphertext and key
-│   └── screenshot3.png          # Experiment 2 results in dark English UI
+│   ├── screenshot3.png          # Experiment 2 results in dark English UI
+│   ├── screenshot4.png          # Experiment 4 candidates and plaintext assembly
+│   └── screenshot5.png          # Experiment 6 difference and receiver plaintext
 ├── js/                          # Classic scripts supporting file://
 │   ├── otp-core.js              # DOM-free UTF-8, hex, bits, XOR and key generation
 │   ├── bit-operations.js        # Character and byte rendering
@@ -231,7 +298,7 @@ otp-animation/                   # Project root
 │   ├── help-modal.js            # Help dialog
 │   ├── i18n.js                  # Japanese and English dictionaries and switching
 │   ├── xor-basics.js            # XOR basics
-│   ├── otp-lab.js               # Experiments 1–3
+│   ├── otp-lab.js               # Experiments 1–6 and their states
 │   └── main.js                  # Application initialization
 └── test/                        # Dependency-free automated tests
     ├── core.test.js             # Known answers, validation, round trips and weak RNG prohibition
