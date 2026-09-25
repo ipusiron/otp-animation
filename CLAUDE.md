@@ -1,67 +1,86 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
-This is a static web application that visualizes the One-Time Pad (OTP) encryption algorithm through animations. It's part of a "100 Security Tools with Generative AI" project (Day 029). The application provides interactive visualization and educational experiments for understanding XOR operations and OTP encryption.
+OTP Animation is Day029 of 100 Security Tools with Generative AI.
+This dependency-free, static MIT-licensed educational app visualizes byte-based OTP with four tabs:
+encryption, decryption, XOR basics and three OTP lab experiments.
 
 ## Key Commands
 
-Since this is a static site with no build process:
-- **Run locally**: Open `index.html` directly in a browser or use a simple HTTP server like `python -m http.server`
-- **Deploy**: Commits to main branch automatically deploy to GitHub Pages at https://ipusiron.github.io/otp-animation/
-- **No build/test/lint commands** - pure HTML/CSS/JavaScript with no dependencies
+- Run tests: `npm test` with Node.js 22; no installation needed.
+- Open `index.html` directly or run `python -m http.server 8000`.
+- GitHub Actions runs the same tests on push and pull_request.
+- GitHub Pages serves the main branch.
 
 ## Architecture
 
-The application uses a modular JavaScript architecture with separate files for different concerns:
+- `index.html`: four accessible tabs, SVG circuit, help dialog, CSP and translation attributes.
+- `style.css`: light/dark variables, narrow layouts, internal scrolling and burn animation.
+- `js/otp-core.js`: DOM-free UTF-8, byte/bit/hex conversion, validation, XOR and secure key generation.
+- `js/encryption.js`, `decryption.js`: byte arrays plus completed-bit counts; results are derived.
+- `js/bit-operations.js`: character-aware byte groups, hex and bit rendering, translated validation errors.
+- `js/clipboard.js`: copy, paste, two-second read timeout and nonblocking toast fallback.
+- `js/file-export.js`: translated educational text records containing plaintext, key and ciphertext.
+- `js/tab-manager.js`, `help-modal.js`: ARIA, keyboard tabs, focus trap and focus restoration.
+- `js/theme-init.js`: synchronous theme selection before first paint.
+- `js/dark-mode.js`: theme switching and safe storage access.
+- `js/i18n.js`: matching Japanese/English dictionaries and state-preserving switching.
+- `js/xor-basics.js`, `otp-lab.js`: XOR basics, gate construction, key reuse and fragment recovery.
+- `js/main.js`: initialization.
 
-### Core Structure
-- **index.html**: Japanese UI with four tabs (暗号化, 復号, XORの基礎, OTP実験室)
-- **style.css**: Visual styling including animations, dark mode, responsive layout
+Keep classic scripts so that file:// works without a server, fetch or modules.
+The core also exports through CommonJS for Node tests.
 
-### JavaScript Modules
-- `js/main.js`: Entry point and initialization
-- `js/utils.js`: Core bit conversion and XOR operations
-- `js/bit-operations.js`: Bit rendering and display
-- `js/tab-manager.js`: Tab switching logic
-- `js/encryption.js`: Encryption animation and controls
-- `js/decryption.js`: Decryption animation and controls
-- `js/xor-basics.js`: XOR educational content and truth tables
-- `js/otp-lab.js`: Interactive experiments (XOR gate simulator, key reuse demo, fragment analysis)
-- `js/clipboard.js`: Clipboard operations with fallback for browser restrictions
-- `js/file-export.js`: Export results to text files
-- `js/dark-mode.js`: Theme switching with localStorage persistence
-- `js/help-modal.js`: Help dialog implementation
+## Data and Cryptographic Rules
 
-## Key Implementation Details
+Plaintext is UTF-8 up to 64 bytes. Reject empty text, isolated surrogates and U+0000–U+001F/U+007F.
+Use TextEncoder/TextDecoder. Invalid decoded UTF-8 produces U+FFFD and a visible note.
+Ciphertext and keys are hexadecimal inputs; byte lengths must match.
+Generate keys only with crypto.getRandomValues. Deterministic test keys must never be used in the app.
+Derive known answers and README tables from OtpCore; do not change reference expectations to pass tests.
 
-### Technical Constraints
-- **Character encoding**: ASCII only (code points 32-126)
-- **Animation timing**: 300ms per bit, 800ms burn effect
-- **Speed control**: 5 levels from 0.1s to 2s
-- **Bit grouping**: 8-bit groups with visual separators
+Editing input stops playback and invalidates old results. Never keep a separate mutable result representation.
+The lab intentionally accepts ASCII 32–126 only, while encryption/decryption support full UTF-8.
+A known plaintext fragment reveals only its corresponding key fragment.
 
-### Interactive Features
-- **Experiment 1**: XOR gate circuit simulator with real-time signal visualization
-- **Experiment 2**: Key reuse vulnerability demonstration (C₁ ⊕ C₂ = P₁ ⊕ P₂)
-- **Experiment 3**: Fragment analysis for partial key recovery
+Perfect secrecy requires truly random, equal-length, secret keys used once.
+The animation does not securely erase memory. This app and its key-containing exports are educational, not production security.
 
-### Browser Compatibility
-- Clipboard API with 2-second timeout and manual input fallback
-- Dark mode auto-detection with system preference support
-- LocalStorage for persistent settings
+## Dictionary Rules
 
-## Custom Slash Commands
+Put every UI message, error, toast, help paragraph and export label in js/i18n.js.
+Both dictionaries must have identical nonempty keys and matching placeholders.
+No raw Japanese literals in other application scripts, except comments.
+HTML uses data-i18n and data-i18n-title/placeholder/aria-label, including hidden and SVG content.
+Never translate user input or decoded plaintext.
+Language priority: ?lang=ja|en, saved otp-language, navigator.language.
 
-- `/reload-workspace` - Re-read all source files and detect changes
-- `/annotate` - Add Japanese comments to code blocks
+## Security and Accessibility
 
-## Development Notes
+Keep meta CSP with same-origin scripts/styles. No unsafe-inline or meta frame-ancestors.
+Do not add inline handlers, style attributes, style elements or element.style assignments.
+Do not add external services, fonts, CDNs or dependencies.
+Never log keys, plaintext or ciphertext. Do not use alert or prompt.
+Keep DOM text insertion safe; preserve HTTP and file:// behavior.
+Keep 44px controls, internal rather than page-level horizontal scrolling, 4.5:1 text contrast,
+keyboard tabs, help focus containment, Escape restoration and reduced-motion support.
 
-- The codebase is intentionally simple with no external dependencies
-- All UI text is in Japanese as this is an educational tool for Japanese users
-- The burn effect on key bits is visual only - bits remain readable after use (intentional design)
-- Uses vanilla JavaScript with ES6+ features (async/await, modules, arrow functions)
-- See `TECHNICAL.md` for detailed implementation notes on clipboard API fallbacks and supported bit string formats
+## Local Storage
+
+Only otp-animation-dark-mode (light/dark) and otp-language (ja/en) may persist.
+Wrap storage access in try/catch. All functionality must remain available when storage is blocked.
+Do not store plaintext, keys, ciphertext or experiment data.
+
+## Tests
+
+- core.test.js: six known answers, validation, 200 mixed UTF-8 round trips, hex/bits and weak RNG prohibition.
+- i18n.test.js: key parity, nonempty values, usage, placeholders and Japanese literal prohibition.
+- html.test.js: CSP, ARIA, labels, safe APIs, early dark styling and noninteractive toasts.
+- contrast.test.js: actual theme variables and required light/dark contrast pairs.
+- format.test.js: readable line limits and minimum document/module lengths.
+- readme.test.js: recomputed known-answer tables, YAML, headings, complete file trees and images.
+
+Keep existing numerical expectations. Test UI in Japanese and English, HTTP/file, light/dark,
+1280/768/390/320px, including mobile contexts and blocked storage.
+See TECHNICAL.md for clipboard behavior and state details.
