@@ -7,14 +7,8 @@ function performXOR(bitA, bitB) {
 
 // デモの説明文を生成
 function generateExplanation(bitA, bitB, result) {
-  const explanations = {
-    '0,0': '0 ⊕ 0 = 0（同じ値なので結果は0）',
-    '0,1': '0 ⊕ 1 = 1（異なる値なので結果は1）',
-    '1,0': '1 ⊕ 0 = 1（異なる値なので結果は1）',
-    '1,1': '1 ⊕ 1 = 0（同じ値なので結果は0）'
-  };
-  
-  return explanations[`${bitA},${bitB}`];
+  const key = bitA === bitB ? 'xor.same' : 'xor.different';
+  return i18n.t(key, { a: bitA, b: bitB, result });
 }
 
 // デモの結果を更新

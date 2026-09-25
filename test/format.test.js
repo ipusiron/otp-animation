@@ -19,4 +19,5 @@ test('existing document and stylesheet structure is retained', () => {
   assert.ok(read('style.css').split('\n').length >= 1500);
   assert.ok(read('index.html').split('\n').length >= 500);
   assert.ok(read('js/otp-core.js').split('\n').length >= 80);
+  assert.ok(read('js/i18n.js').split('\n').length >= 400);
 });

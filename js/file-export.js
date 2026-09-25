@@ -16,7 +16,7 @@ function downloadFile(content, filename, mimeType = 'text/plain') {
 
 // ビット列を8ビット区切りで整形
 function formatBitsForFile(bits, label) {
-  if (!bits || bits.length === 0) return `${label}: (なし)\n`;
+  if (!bits || bits.length === 0) return `${label}: ${i18n.t('export.none')}\n`;
   
   const bitString = bits.join('');
   const chunks = [];
@@ -40,23 +40,21 @@ function buildExportContent(mode) {
   const cipher = decrypt ? state.cipher : encryptionCipher();
   if (!state.key || state.completed !== plain.length * 8) return '';
   let content = '='.repeat(60) + '\n';
-  content += decrypt ? 'OTP復号結果レポート\n' : 'OTP暗号化結果レポート\n';
-  content += `出力日時: ${new Date().toISOString()}\n\n`;
-  content += formatTextWithAscii(OtpCore.decodeBytes(plain).text, '平文');
-  for (const [label, bytes] of [['平文', plain], ['鍵', state.key], ['暗号文', cipher]]) {
-    content += `${label} (16進数): ${OtpCore.toHex(bytes)}\n`;
+  content += (decrypt ? i18n.t('export.decryption') : i18n.t('export.encryption')) + '\n';
+  content += i18n.t('export.date', { date: new Date().toISOString() }) + '\n\n';
+  content += formatTextWithAscii(OtpCore.decodeBytes(plain).text, i18n.t('export.plain'));
+  for (const [label, bytes] of [[i18n.t('export.plain'), plain], [i18n.t('export.key'), state.key], [i18n.t('export.cipher'), cipher]]) {
+    content += `${label} (${i18n.t('export.hex')}): ${OtpCore.toHex(bytes)}\n`;
     content += formatBitsForFile(OtpCore.bytesToBits(bytes), label);
   }
-  content += '\n【XOR演算詳細】\n';
+  content += '\n' + i18n.t('export.steps') + '\n';
   const plainBits = OtpCore.bytesToBits(plain);
   const keyBits = OtpCore.bytesToBits(state.key);
   const cipherBits = OtpCore.bytesToBits(cipher);
   for (let i = 0; i < plainBits.length; i++) {
-    content += `ビット${i + 1}: ${plainBits[i]} XOR ${keyBits[i]} = ${cipherBits[i]}\n`;
+    content += i18n.t('export.bit', { n: i + 1, p: plainBits[i], k: keyBits[i], c: cipherBits[i] }) + '\n';
   }
-  content += '\n※ 鍵が真にランダムで、平文と同じ長さで、一度しか使わず、秘密に保たれるときに限り、';
-  content += '暗号文から平文の情報は得られません（完全秘匿性）。';
-  content += 'このファイルには鍵が含まれるため、教材としての記録です。\n';
+  content += '\n' + i18n.t('export.note') + '\n';
   return content;
 }
 

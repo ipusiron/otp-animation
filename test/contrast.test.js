@@ -22,7 +22,8 @@ const pairs = [
   ['dark', 'table-ink', 'table-bg'], ['dark', 'purple', '#333333'], ['dark', 'purple', '#2a2a2a'],
   ['dark', 'error-ink', '#333333'], ['dark', 'pink', '#404040'], ['dark', 'disabled-ink', '#1a1a1a'],
   ['light', 'toast-ink', 'toast-bg'], ['light', 'toast-ink', 'toast-success-bg'], ['light', 'toast-ink', 'toast-error-bg'],
-  ['dark', 'toast-ink', 'toast-bg'], ['dark', 'toast-ink', 'toast-success-bg'], ['dark', 'toast-ink', 'toast-error-bg']
+  ['dark', 'toast-ink', 'toast-bg'], ['dark', 'toast-ink', 'toast-success-bg'], ['dark', 'toast-ink', 'toast-error-bg'],
+  ['light', '#555555', '#eeeeee'], ['dark', '#bbbbbb', '#222222']
 ];
 
 for (const [index, [theme, foreground, background]] of pairs.entries()) {

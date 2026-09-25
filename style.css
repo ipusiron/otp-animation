@@ -153,6 +153,14 @@ h1 {
   justify-content: center;
 }
 
+#languageToggle {
+  width: auto;
+  min-width: 44px;
+  padding-inline: 12px;
+  font-size: 0.9rem;
+  border-radius: 24px;
+}
+
 .control-button:hover {
   background: #f0f0f0;
   transform: scale(1.1);
@@ -782,13 +790,13 @@ h1 {
 /* プレースホルダビット */
 .bit.placeholder {
   background: #eee;
-  color: #bbb;
+  color: #555555;
   border-style: dashed;
 }
 
 :is(html.dark-mode, body.dark-mode) .bit.placeholder {
   background: #222;
-  color: #666;
+  color: #bbbbbb;
   border-color: #444;
 }
 
@@ -856,6 +864,7 @@ h1 {
 /* トースト通知 */
 .toast {
   position: fixed;
+  pointer-events: none;
   top: 20px;
   right: 20px;
   padding: 1rem 1.5rem;

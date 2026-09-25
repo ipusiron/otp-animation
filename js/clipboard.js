@@ -17,7 +17,7 @@ function formatBitsForClipboard(bits) {
 // トースト通知を表示
 function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
-  toast.textContent = message;
+  i18n.assign(toast, 'textContent', message);
   toast.className = `toast ${type}`;
   toast.classList.add('show');
   
@@ -43,8 +43,8 @@ async function copyToClipboard(text, successMessage) {
       document.body.removeChild(textArea);
       showToast(successMessage, 'success');
     } catch (fallbackErr) {
-      console.error('❌ コピー失敗:', fallbackErr);
-      showToast('コピーに失敗しました', 'error');
+      console.error('Copy failed:', fallbackErr);
+      showToast(i18n.t('copy.failed'), 'error');
     }
   }
 }
@@ -86,7 +86,7 @@ async function pasteFromClipboard(successCallback, errorCallback) {
 }
 
 function fallbackPaste(successCallback, errorCallback) {
-  errorCallback('入力欄に直接貼り付けてください');
+  errorCallback(i18n.t('paste.manual'));
 }
 
 function setupBitCopyButtons() {
@@ -101,8 +101,8 @@ function setupBitCopyButtons() {
   for (const [id, source] of Object.entries(sources)) {
     document.getElementById(id).addEventListener('click', () => {
       const bytes = source();
-      if (!bytes.length) { showToast('コピーするデータがありません', 'error'); return; }
-      copyToClipboard(formatBitsForClipboard(OtpCore.bytesToBits(bytes)), 'コピーしました');
+      if (!bytes.length) { showToast(i18n.t('copy.empty'), 'error'); return; }
+      copyToClipboard(formatBitsForClipboard(OtpCore.bytesToBits(bytes)), i18n.t('copy.done'));
     });
   }
   const targets = {
@@ -127,7 +127,7 @@ function setupBitCopyButtons() {
   };
   for (const [id, accept] of Object.entries(targets)) {
     document.getElementById(id).addEventListener('click', () => {
-      pasteFromClipboard(bytes => { accept(bytes); showToast('貼り付けました'); }, message => showToast(message, 'error'));
+      pasteFromClipboard(bytes => { accept(bytes); showToast(i18n.t('paste.done')); }, message => showToast(message, 'error'));
     });
   }
 }

@@ -2,6 +2,7 @@
 
 // 初期表示でHELLOのビットを反映
 window.addEventListener('DOMContentLoaded', () => {
+  i18n.init();
   setupTabs();
   setupDecryptionHandlers();
   setupEncryptionControls();

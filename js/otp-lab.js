@@ -74,10 +74,10 @@ function updateGateConstruction() {
   updateWireColors(a, b, simulation);
   
   // 説明文を更新
-  const explanation = `${a} ⊕ ${b} = ${simulation.result}\n【計算過程: ` +
-    `NOT(${a})=${simulation.notA}, NOT(${b})=${simulation.notB}, ${a}∧${simulation.notB}=${simulation.andLeft}, ` +
-    `${simulation.notA}∧${b}=${simulation.andRight}, ${simulation.andLeft}∨${simulation.andRight}=${simulation.result}】`;
-  document.getElementById('constructionExplanation').textContent = explanation;
+  const steps = `NOT(${a})=${simulation.notA}, NOT(${b})=${simulation.notB}, ${a}∧${simulation.notB}=${simulation.andLeft}, ` +
+    `${simulation.notA}∧${b}=${simulation.andRight}, ${simulation.andLeft}∨${simulation.andRight}=${simulation.result}`;
+  document.getElementById('constructionExplanation').textContent =
+    i18n.t('lab.calculation', { a, b, result: simulation.result, steps });
 
 }
 
@@ -171,14 +171,14 @@ function demonstrateKeyReuse() {
   const p2 = document.getElementById('plaintext2').value;
   
   if (!p1 || !p2) {
-    showToast('⚠️ 両方の平文を入力してください');
+    showToast(i18n.t('lab.both'));
     return;
   }
   
   // 文字数を合わせる（短い方に合わせる）
   const minLength = Math.min(p1.length, p2.length);
-  document.getElementById('reuseLengthNote').textContent = p1.length !== p2.length ?
-    `短い方（${minLength} 文字）にそろえました` : '';
+  i18n.assign(document.getElementById('reuseLengthNote'), 'textContent',
+    p1.length !== p2.length ? i18n.t('lab.short', { n: minLength }) : '');
   keyReuseState.plaintext1 = OtpCore.encodeText(p1.substring(0, minLength));
   keyReuseState.plaintext2 = OtpCore.encodeText(p2.substring(0, minLength));
   
@@ -187,7 +187,7 @@ function demonstrateKeyReuse() {
   const { bytes: p2Bits, invalidChar: p2Invalid } = validateLabText(p2.substring(0, minLength));
   
   if (p1Invalid || p2Invalid) {
-    showToast(`❌ 使用できない文字があります: ${p1Invalid || p2Invalid}`);
+    showToast(i18n.t('lab.invalid', { char: p1Invalid || p2Invalid }));
     return;
   }
   
@@ -229,8 +229,8 @@ function displayKeyReuseResults(p1Bits, p2Bits, key, c1Bits, c2Bits, cXor, pXor)
   
   // 結果の一致確認
   const isMatch = JSON.stringify(cXor) === JSON.stringify(pXor);
-  document.getElementById('matchResult').textContent = isMatch ? 
-    '一致しています！' : '一致していません（エラー）';
+  i18n.assign(document.getElementById('matchResult'), 'textContent',
+    isMatch ? i18n.t('lab.match') : i18n.t('lab.mismatch'));
   document.getElementById('matchResult').className = isMatch ? 'result-match' : 'result-error';
 }
 
@@ -246,13 +246,13 @@ function encryptTargetText() {
   const plaintext = document.getElementById('targetPlaintext').value;
   
   if (!plaintext) {
-    showToast('⚠️ 対象平文を入力してください');
+    showToast(i18n.t('lab.target'));
     return;
   }
   
   const { bytes, invalidChar } = validateLabText(plaintext);
   if (invalidChar) {
-    showToast(`❌ 使用できない文字があります: ${invalidChar}`);
+    showToast(i18n.t('lab.invalid', { char: invalidChar }));
     return;
   }
   
@@ -275,31 +275,31 @@ function encryptTargetText() {
 // 断片から鍵を解析
 function analyzeFragment() {
   if (!fragmentAnalysisState.targetCipher) {
-    showToast('⚠️ まず対象テキストを暗号化してください');
+    showToast(i18n.t('lab.first'));
     return;
   }
   
   const knownFragment = document.getElementById('knownFragment').value;
   const positionText = document.getElementById('fragmentPosition').value;
   if (!positionText.trim() || !Number.isInteger(Number(positionText))) {
-    showToast('位置を入力してください', 'error');
+    showToast(i18n.t('lab.position'), 'error');
     return;
   }
   const position = Number(positionText) - 1;
   
   if (!knownFragment) {
-    showToast('⚠️ 既知の断片を入力してください');
+    showToast(i18n.t('lab.fragment'));
     return;
   }
   
   if (position < 0 || position + knownFragment.length > fragmentAnalysisState.targetPlaintext.length) {
-    showToast('⚠️ 位置が範囲外です');
+    showToast(i18n.t('lab.range'));
     return;
   }
   
   const { bytes: fragmentBits, invalidChar } = validateLabText(knownFragment);
   if (invalidChar) {
-    showToast(`❌ 使用できない文字があります: ${invalidChar}`);
+    showToast(i18n.t('lab.invalid', { char: invalidChar }));
     return;
   }
   
@@ -330,9 +330,8 @@ function displayFragmentAnalysis(fragmentBits, cipherBits, deducedKey, isCorrect
   document.getElementById('correspondingCipherBits').textContent = formatBits(cipherBits);
   document.getElementById('deducedKeyBits').textContent = formatBits(deducedKey);
   
-  document.getElementById('verificationResult').textContent = isCorrect ?
-    '推測された鍵は実際の鍵と一致します！' : 
-    '推測された鍵が実際の鍵と一致しません（エラー）';
+  i18n.assign(document.getElementById('verificationResult'), 'textContent',
+    isCorrect ? i18n.t('lab.verified') : i18n.t('lab.unverified'));
   document.getElementById('verificationResult').className = isCorrect ? 'result-match' : 'result-error';
 }
 
@@ -510,10 +509,10 @@ function validateASCIIInput(event) {
   
   if (invalidChar) {
     input.classList.add('invalid-input');
-    input.title = `使用できない文字: ${invalidChar}`;
+    i18n.assign(input, 'title', i18n.t('lab.invalid', { char: invalidChar }));
   } else {
     input.classList.remove('invalid-input');
-    input.title = '';
+    i18n.assign(input, 'title', '');
   }
 }
 

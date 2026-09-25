@@ -46,21 +46,15 @@ function renderByteRow(containerId, bytes, role, spans = null, completed = 0) {
   }
 }
 
-// Stage two messages are migrated to the bilingual dictionary in stage four.
+// Translate validation errors without retaining input text.
 function inputError(reason, detail = {}) {
-  const messages = {
-    empty: '入力してください',
-    surrogate: '孤立サロゲートは使用できません',
-    control: `制御文字 U+${(detail.char || 0).toString(16).toUpperCase().padStart(4, '0')} は使用できません`,
-    tooLong: `64 バイト以下で入力してください${detail.bytes ? `（${detail.bytes} バイト）` : ''}`,
-    notHex: '16進数で入力してください',
-    oddLength: '16進数の桁数は偶数にしてください',
-    notBits: 'ビット列は0と1で入力してください',
-    notByteAligned: 'ビット数は8の倍数にしてください',
-    lengthMismatch: '平文または暗号文と鍵の長さが違います',
-    invalidUtf8: 'UTF-8 として読めないバイトの並びがあります（置換文字 U+FFFD で表示）'
-  };
-  return messages[reason] || reason;
+  if (reason === 'control') {
+    const code = (detail.char || 0).toString(16).toUpperCase().padStart(4, '0');
+    return i18n.t('error.control', { code });
+  }
+  if (reason === 'tooLong' && detail.bytes) return i18n.t('error.tooLongCount', { bytes: detail.bytes });
+  const key = 'error.' + reason;
+  return Object.hasOwn(i18n.ja, key) ? i18n.t(key) : reason;
 }
 
 // 各ビットを画面に描画（8ビットグループで）

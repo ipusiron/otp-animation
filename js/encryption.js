@@ -21,7 +21,7 @@ function refreshEncryption() {
   document.getElementById('encryptProgress').textContent = `${state.completed} / ${state.plain.length * 8}`;
   document.getElementById('encryptAnimationControls').hidden = !state.key;
   document.getElementById('startAnimation').disabled = !state.key || encryptPlayback.playing;
-  document.getElementById('encryptPlayPause').textContent = encryptPlayback.playing ? '⏸ 一時停止' : '▶ 再生';
+  document.getElementById('encryptPlayPause').textContent = encryptPlayback.playing ? i18n.t('pause') : i18n.t('play');
   document.getElementById('encryptStepBack').disabled = !state.completed || encryptPlayback.playing;
   document.getElementById('encryptStepForward').disabled = !state.key ||
     state.completed >= state.plain.length * 8 || encryptPlayback.playing;
@@ -36,9 +36,9 @@ function updatePlaintext() {
   const text = document.getElementById('plaintext').value;
   const validation = OtpCore.validateText(text);
   encryptionState.plain = validation.ok ? OtpCore.encodeText(text) : [];
-  document.getElementById('plainCount').textContent =
-    `${[...text].length} 文字・${OtpCore.encodeText(text).length} バイト（上限 64）`;
-  document.getElementById('errorMessage').textContent = validation.ok ? '' : inputError(validation.reason, validation);
+  i18n.assign(document.getElementById('plainCount'), 'textContent',
+    i18n.t('plain.count', { chars: [...text].length, bytes: OtpCore.encodeText(text).length }));
+  i18n.assign(document.getElementById('errorMessage'), 'textContent', validation.ok ? '' : inputError(validation.reason, validation));
   document.getElementById('generateKey').disabled = !validation.ok;
   refreshEncryption();
 }

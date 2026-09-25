@@ -21,11 +21,11 @@ function refreshDecryption() {
   const decoded = OtpCore.decodeBytes(decryptionPlain());
   document.getElementById('decryptedText').textContent = complete ? decoded.text : '';
   document.getElementById('decryptedHex').textContent = complete ? OtpCore.toHex(decryptionPlain()) : '';
-  document.getElementById('decodeNote').textContent = complete && !decoded.valid ? inputError('invalidUtf8') : '';
+  i18n.assign(document.getElementById('decodeNote'), 'textContent', complete && !decoded.valid ? inputError('invalidUtf8') : '');
   document.getElementById('decryptProgress').textContent = `${state.completed} / ${state.cipher.length * 8}`;
   document.getElementById('decryptAnimationControls').hidden = !state.key;
   document.getElementById('startDecryption').disabled = !state.key || decryptPlayback.playing;
-  document.getElementById('decryptPlayPause').textContent = decryptPlayback.playing ? '⏸ 一時停止' : '▶ 再生';
+  document.getElementById('decryptPlayPause').textContent = decryptPlayback.playing ? i18n.t('pause') : i18n.t('play');
   document.getElementById('decryptStepBack').disabled = !state.completed || decryptPlayback.playing;
   document.getElementById('decryptStepForward').disabled = !state.key ||
     state.completed >= state.cipher.length * 8 || decryptPlayback.playing;
@@ -46,9 +46,9 @@ function updateDecryptionInputs() {
     const key = OtpCore.parseHex(document.getElementById('decryptKey').value);
     OtpCore.xorBytes(cipher, key);
     decryptionState.key = key;
-    error.textContent = '';
+    i18n.assign(error, 'textContent', '');
   } catch (e) {
-    error.textContent = inputError(e.message);
+    i18n.assign(error, 'textContent', inputError(e.message));
   }
   refreshDecryption();
 }
@@ -109,8 +109,8 @@ function setupDecryptionHandlers() {
   }
   document.getElementById('copyFromEncryption').addEventListener('click', () => {
     if (!encryptionState.key) {
-      const message = '先に暗号化タブで鍵を生成してください';
-      document.getElementById('decryptErrorMessage').textContent = message;
+      const message = i18n.t('receive.first');
+      i18n.assign(document.getElementById('decryptErrorMessage'), 'textContent', message);
       showToast(message, 'error');
       return;
     }
@@ -125,7 +125,7 @@ function setupDecryptionHandlers() {
       document.getElementById('decryptKey').value = OtpCore.toHex(OtpCore.randomBytes(cipher.length));
       updateDecryptionInputs();
     } catch (e) {
-      document.getElementById('decryptErrorMessage').textContent = inputError(e.message);
+      i18n.assign(document.getElementById('decryptErrorMessage'), 'textContent', inputError(e.message));
     }
   });
   document.getElementById('startDecryption').addEventListener('click', playDecryption);

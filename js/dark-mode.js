@@ -64,7 +64,8 @@ function updateToggleButton() {
   const toggleButton = document.getElementById('darkModeToggle');
   if (toggleButton) {
     toggleButton.textContent = isDarkMode ? '☀️' : '🌙';
-    toggleButton.title = isDarkMode ? 'ライトモードに切り替え' : 'ダークモードに切り替え';
+    toggleButton.title = isDarkMode ? i18n.t('theme.light') : i18n.t('theme.dark');
+    toggleButton.setAttribute('aria-label', toggleButton.title);
   }
 }
 

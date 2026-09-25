@@ -69,3 +69,7 @@ test('application scripts contain no logging, inline style mutation or blocking 
 test('saved dark root class styles the body before application initialization', () => {
   assert.match(read('style.css'), /html\.dark-mode body\s*\{[^}]*background: #1a1a1a;[^}]*color: #e0e0e0;/);
 });
+
+test('noninteractive toast does not intercept header controls', () => {
+  assert.match(read('style.css'), /\.toast\s*\{[^}]*pointer-events: none;/);
+});
