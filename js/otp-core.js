@@ -85,9 +85,61 @@ const OtpCore = (() => {
     return Array.from(u8);
   }
 
+  const CRIB_SAMPLE = {
+    p1: 'MEET ME AT THE NORTH GATE AT NOON',
+    p2: 'THE PACKAGE IS UNDER THE OLD OAK.'
+  };
+
+  function isReadable(bytes) {
+    return bytes.length > 0 && bytes.every(b =>
+      (b >= 0x41 && b <= 0x5a) || (b >= 0x61 && b <= 0x7a) || [0x20, 0x2e, 0x2c, 0x27].includes(b));
+  }
+
+  function cribDrag(x, crib) {
+    const c = encodeText(crib);
+    const out = [];
+    for (let i = 0; i + c.length <= x.length; i++) {
+      const bytes = c.map((b, k) => b ^ x[i + k]);
+      out.push({ offset: i, bytes, text: String.fromCharCode(...bytes), readable: isReadable(bytes) });
+    }
+    return out;
+  }
+
+  function assemble(x, placements) {
+    const p1 = new Array(x.length).fill(null), p2 = new Array(x.length).fill(null);
+    const conflict = new Set();
+    for (const { offset, crib, into } of placements) {
+      const c = encodeText(crib);
+      c.forEach((b, k) => {
+        const i = offset + k;
+        if (i >= x.length) return;
+        const [mine, other] = into === 1 ? [p1, p2] : [p2, p1];
+        if (mine[i] !== null && mine[i] !== b) conflict.add(i);
+        mine[i] = b;
+        other[i] = b ^ x[i];
+      });
+    }
+    const show = a => a.map(b => (b === null ? '_' : String.fromCharCode(b))).join('');
+    return { p1: show(p1), p2: show(p2), known: p1.filter(b => b !== null).length, conflict: [...conflict].sort((a, b) => a - b) };
+  }
+
+  function forgeKey(c, alt) {
+    return xorBytes(c, encodeText(alt));
+  }
+
+  function flip(c, offset, known, target) {
+    const a = encodeText(known), b = encodeText(target);
+    if (a.length !== b.length) throw new Error('lengthMismatch');
+    if (offset < 0 || offset + a.length > c.length) throw new Error('outOfRange');
+    const out = c.slice();
+    a.forEach((v, k) => { out[offset + k] ^= v ^ b[k]; });
+    return out;
+  }
+
   return {
     MAX_BYTES, encodeText, charSpans, validateText, decodeBytes, bytesToBits,
-    bitsToBytes, toHex, parseHex, parseBits, xorBytes, randomBytes
+    bitsToBytes, toHex, parseHex, parseBits, xorBytes, randomBytes,
+    CRIB_SAMPLE, isReadable, cribDrag, assemble, forgeKey, flip
   };
 })();
 
