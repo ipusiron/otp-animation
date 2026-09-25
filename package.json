@@ -1,0 +1,7 @@
+{
+  "name": "otp-animation",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}
