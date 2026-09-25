@@ -1,397 +1,113 @@
-// 暗号化関連の処理
+// Encryption stores bytes and a completed-bit count, never a second result state.
+const encryptionState = { plain: [], key: null, completed: 0 };
+const encryptPlayback = { timer: null, playing: false, speed: 300 };
 
-// グローバル変数
-let plainBits = [];
-let keyBits = [];
-let cipherBits = [];
-
-// アニメーション制御用変数
-let encryptAnimationState = {
-  isPlaying: false,
-  isPaused: false,
-  currentIndex: 0,
-  timeoutId: null,
-  totalBits: 0,
-  speed: 300,
-  keysGenerated: false
-};
-
-// アニメーションの1ステップを実行
-function executeEncryptionStep(index, plainBits, keyBitsInput, cipherBitsInput) {
-  if (index >= plainBits.length || index < 0) return;
-
-  // 以前のハイライトをクリア
-  document.querySelectorAll('#plaintextBitsContainer .bit.active').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('#keyBitsContainer .bit.active').forEach(el => el.classList.remove('active'));
-
-  const plainSpan = document.querySelector(`#plaintextBitsContainer .bit[data-index='${index}']`);
-  const keySpan = document.querySelector(`#keyBitsContainer .bit[data-index='${index}']`);
-  const cipherSpan = document.querySelector(`#cipherBitsContainer .bit[data-index='${index}']`);
-
-  // 速度に応じた遅延時間を計算
-  const baseDelay = Math.max(50, encryptAnimationState.speed * 0.3);
-  const burnDelay = Math.max(200, encryptAnimationState.speed * 0.8);
-  const appearDelay = Math.max(100, encryptAnimationState.speed * 0.5);
-
-  // 処理中のビットをハイライト
-  plainSpan.classList.add('active');
-  keySpan.classList.add('active');
-
-  // 暗号化処理の視覚効果
-  if (!keySpan.classList.contains('burn')) {
-    setTimeout(() => {
-      plainSpan.classList.remove('active');
-      keySpan.classList.remove('active');
-      keySpan.classList.add('burn');
-
-      cipherSpan.textContent = cipherBitsInput[index];
-      cipherSpan.classList.remove('placeholder');
-      cipherSpan.classList.add('appear');
-
-      setTimeout(() => {
-        keySpan.classList.add('ash');
-        setTimeout(() => {
-          cipherSpan.classList.remove('appear');
-        }, appearDelay);
-      }, burnDelay);
-    }, baseDelay);
-  }
-
-  // 進捗を更新
-  updateEncryptProgress(index + 1, plainBits.length);
+function encryptionCipher() {
+  return encryptionState.key ? OtpCore.xorBytes(encryptionState.plain, encryptionState.key) : [];
 }
 
-// アニメーション再生処理
-function animateEncryption(plainBits, keyBitsInput, cipherBitsInput) {
-  // 鍵や暗号ビットが未生成の場合は、ここで生成する
-  if (!keyBitsInput.length || keyBitsInput.length !== plainBits.length) {
-    keyBitsInput = generateRandomBits(plainBits.length);
-    keyBits = keyBitsInput;
-    cipherBitsInput = xorBits(plainBits, keyBitsInput);
-    cipherBits = cipherBitsInput;
-    renderBits('keyBitsContainer', keyBitsInput, 'key');
-    renderPlaceholderCipherBits(plainBits.length);
-  }
+function stopEncryption() {
+  clearTimeout(encryptPlayback.timer);
+  encryptPlayback.timer = null;
+  encryptPlayback.playing = false;
+}
 
-  // アニメーション状態を初期化
-  encryptAnimationState.isPlaying = true;
-  encryptAnimationState.isPaused = false;
-  encryptAnimationState.currentIndex = 0;
-  encryptAnimationState.totalBits = plainBits.length;
+function refreshEncryption() {
+  const state = encryptionState;
+  const spans = OtpCore.charSpans(document.getElementById('plaintext').value);
+  renderByteRow('plaintextBitsContainer', state.plain, 'plain', spans);
+  renderByteRow('keyBitsContainer', state.key || [], 'key', spans, state.completed);
+  renderByteRow('cipherBitsContainer', encryptionCipher(), 'cipher', spans, state.completed);
+  document.getElementById('encryptProgress').textContent = `${state.completed} / ${state.plain.length * 8}`;
+  document.getElementById('encryptAnimationControls').hidden = !state.key;
+  document.getElementById('startAnimation').disabled = !state.key || encryptPlayback.playing;
+  document.getElementById('encryptPlayPause').textContent = encryptPlayback.playing ? '⏸ 一時停止' : '▶ 再生';
+  document.getElementById('encryptStepBack').disabled = !state.completed || encryptPlayback.playing;
+  document.getElementById('encryptStepForward').disabled = !state.key ||
+    state.completed >= state.plain.length * 8 || encryptPlayback.playing;
+  document.getElementById('encryptComplete').disabled = !state.key || state.completed >= state.plain.length * 8;
+  document.getElementById('exportEncryption').disabled = !state.key || state.completed !== state.plain.length * 8;
+}
 
-  // ボタン状態を更新
-  document.getElementById('encryptPlayPause').textContent = '⏸ 一時停止';
-  updateEncryptProgress(0, plainBits.length);
-  updateEncryptButtonStates();
+function updatePlaintext() {
+  stopEncryption();
+  encryptionState.key = null;
+  encryptionState.completed = 0;
+  const text = document.getElementById('plaintext').value;
+  const validation = OtpCore.validateText(text);
+  encryptionState.plain = validation.ok ? OtpCore.encodeText(text) : [];
+  document.getElementById('plainCount').textContent =
+    `${[...text].length} 文字・${OtpCore.encodeText(text).length} バイト（上限 64）`;
+  document.getElementById('errorMessage').textContent = validation.ok ? '' : inputError(validation.reason, validation);
+  document.getElementById('generateKey').disabled = !validation.ok;
+  refreshEncryption();
+}
 
-  function step() {
-    if (!encryptAnimationState.isPlaying || encryptAnimationState.isPaused) return;
-    if (encryptAnimationState.currentIndex >= plainBits.length) {
-      encryptAnimationState.isPlaying = false;
-      document.getElementById('encryptPlayPause').textContent = '▶ 再生';
-      updateEncryptButtonStates();
-      return;
+function setEncryptionKey(bytes) {
+  if (!encryptionState.plain.length || bytes.length !== encryptionState.plain.length) throw new Error('lengthMismatch');
+  stopEncryption();
+  encryptionState.key = bytes.slice();
+  encryptionState.completed = 0;
+  refreshEncryption();
+}
+
+function executeEncryptionStep() {
+  if (!encryptionState.key || encryptionState.completed >= encryptionState.plain.length * 8) return;
+  encryptionState.completed++;
+  refreshEncryption();
+}
+
+function playEncryption() {
+  stopEncryption();
+  if (!encryptionState.key) return;
+  if (encryptionState.completed === encryptionState.plain.length * 8) encryptionState.completed = 0;
+  encryptPlayback.playing = true;
+  function tick() {
+    if (!encryptPlayback.playing) return;
+    executeEncryptionStep();
+    if (encryptionState.completed >= encryptionState.plain.length * 8) {
+      stopEncryption();
+      refreshEncryption();
+    } else {
+      encryptPlayback.timer = setTimeout(tick, encryptPlayback.speed);
     }
-
-    executeEncryptionStep(encryptAnimationState.currentIndex, plainBits, keyBitsInput, cipherBitsInput);
-    encryptAnimationState.currentIndex++;
-    updateEncryptButtonStates();
-
-    encryptAnimationState.timeoutId = setTimeout(step, encryptAnimationState.speed);
   }
-
-  step();
+  tick();
 }
 
-// 進捗表示を更新
-function updateEncryptProgress(current, total) {
-  document.getElementById('encryptProgress').textContent = `${current} / ${total}`;
-  
-  // 暗号化完了時にエクスポートボタンを有効化
-  const exportButton = document.getElementById('exportEncryption');
-  if (exportButton) {
-    exportButton.disabled = current < total;
-  }
-}
-
-// 暗号化ボタンの状態を更新
-function updateEncryptButtonStates() {
-  const keysGenerated = encryptAnimationState.keysGenerated;
-  const isPlaying = encryptAnimationState.isPlaying && !encryptAnimationState.isPaused;
-  const currentIndex = encryptAnimationState.currentIndex;
-  const totalBits = encryptAnimationState.totalBits;
-  
-  // 暗号化開始ボタン
-  document.getElementById('startAnimation').disabled = !keysGenerated;
-  
-  // コントロールパネルの表示/非表示
-  const controlsPanel = document.getElementById('encryptAnimationControls');
-  if (keysGenerated) {
-    controlsPanel.style.display = 'flex';
-  } else {
-    controlsPanel.style.display = 'none';
-    return;
-  }
-  
-  // 各ボタンの有効/無効状態
-  const hasStarted = encryptAnimationState.isPlaying || encryptAnimationState.isPaused || currentIndex > 0;
-  
-  document.getElementById('encryptPlayPause').disabled = !hasStarted; // 開始前は無効
-  document.getElementById('encryptReset').disabled = false; // 鍵生成後は常に有効
-  document.getElementById('encryptStepBack').disabled = currentIndex <= 0 || isPlaying;
-  document.getElementById('encryptStepForward').disabled = currentIndex >= totalBits || isPlaying;
-  document.getElementById('encryptComplete').disabled = !hasStarted || currentIndex >= totalBits || isPlaying; // 開始前は無効
-  document.getElementById('encryptSpeed').disabled = false; // 常に有効
-}
-
-// アニメーションコントロールボタンのイベントハンドラ
 function setupEncryptionControls() {
-  // 再生/一時停止ボタン
   document.getElementById('encryptPlayPause').addEventListener('click', () => {
-    if (encryptAnimationState.isPlaying && !encryptAnimationState.isPaused) {
-      // 一時停止
-      encryptAnimationState.isPaused = true;
-      document.getElementById('encryptPlayPause').textContent = '▶ 再生';
-      clearTimeout(encryptAnimationState.timeoutId);
-      updateEncryptButtonStates();
-    } else if (encryptAnimationState.isPaused) {
-      // 再開
-      encryptAnimationState.isPaused = false;
-      document.getElementById('encryptPlayPause').textContent = '⏸ 一時停止';
-      updateEncryptButtonStates();
-      
-      function step() {
-        if (!encryptAnimationState.isPlaying || encryptAnimationState.isPaused) return;
-        if (encryptAnimationState.currentIndex >= plainBits.length) {
-          encryptAnimationState.isPlaying = false;
-          document.getElementById('encryptPlayPause').textContent = '▶ 再生';
-          updateEncryptButtonStates();
-          return;
-        }
-
-        executeEncryptionStep(encryptAnimationState.currentIndex, plainBits, keyBits, cipherBits);
-        encryptAnimationState.currentIndex++;
-        updateEncryptButtonStates();
-
-        encryptAnimationState.timeoutId = setTimeout(step, encryptAnimationState.speed);
-      }
-      step();
-    } else {
-      // 最初から再生
-      resetEncryptionAnimation();
-      animateEncryption(plainBits, keyBits, cipherBits);
-    }
+    if (encryptPlayback.playing) { stopEncryption(); refreshEncryption(); } else playEncryption();
   });
-
-  // 1つ戻るボタン
-  document.getElementById('encryptStepBack').addEventListener('click', () => {
-    if (encryptAnimationState.currentIndex > 0) {
-      encryptAnimationState.currentIndex--;
-      
-      // 一時停止状態にする
-      encryptAnimationState.isPaused = true;
-      document.getElementById('encryptPlayPause').textContent = '▶ 再生';
-      clearTimeout(encryptAnimationState.timeoutId);
-      
-      // ビットの状態をリセットしてから指定位置まで再現
-      resetBitStates();
-      for (let i = 0; i < encryptAnimationState.currentIndex; i++) {
-        executeSilentStep(i, plainBits, keyBits, cipherBits);
-      }
-      
-      // 最後に生成された暗号文ビットをハイライト
-      if (encryptAnimationState.currentIndex > 0) {
-        const index = encryptAnimationState.currentIndex - 1;
-        const cipherSpan = document.querySelector(`#cipherBitsContainer .bit[data-index='${index}']`);
-        if (cipherSpan) {
-          cipherSpan.classList.add('appear');
-          // 一定時間後にハイライトを削除
-          setTimeout(() => {
-            cipherSpan.classList.remove('appear');
-          }, 1000);
-        }
-      }
-      
-      updateEncryptProgress(encryptAnimationState.currentIndex, plainBits.length);
-      updateEncryptButtonStates();
-    }
-  });
-
-  // 1つ進むボタン
   document.getElementById('encryptStepForward').addEventListener('click', () => {
-    if (encryptAnimationState.currentIndex < plainBits.length) {
-      // 一時停止状態にする
-      encryptAnimationState.isPaused = true;
-      document.getElementById('encryptPlayPause').textContent = '▶ 再生';
-      clearTimeout(encryptAnimationState.timeoutId);
-      
-      executeEncryptionStep(encryptAnimationState.currentIndex, plainBits, keyBits, cipherBits);
-      encryptAnimationState.currentIndex++;
-      updateEncryptButtonStates();
-    }
+    stopEncryption();
+    executeEncryptionStep();
   });
-
-  // リセットボタン
+  document.getElementById('encryptStepBack').addEventListener('click', () => {
+    stopEncryption();
+    encryptionState.completed = Math.max(0, encryptionState.completed - 1);
+    refreshEncryption();
+  });
   document.getElementById('encryptReset').addEventListener('click', () => {
-    clearTimeout(encryptAnimationState.timeoutId);
-    encryptAnimationState.isPlaying = false;
-    encryptAnimationState.isPaused = false;
-    encryptAnimationState.currentIndex = 0;
-    
-    document.getElementById('encryptPlayPause').textContent = '▶ 再生';
-    
-    resetBitStates();
-    updateEncryptProgress(0, plainBits.length);
-    updateEncryptButtonStates();
+    stopEncryption();
+    encryptionState.completed = 0;
+    refreshEncryption();
   });
-
-  // 全処理ボタン
   document.getElementById('encryptComplete').addEventListener('click', () => {
-    clearTimeout(encryptAnimationState.timeoutId);
-    encryptAnimationState.isPlaying = false;
-    encryptAnimationState.isPaused = true;
-    document.getElementById('encryptPlayPause').textContent = '▶ 再生';
-    
-    // すべてのステップを一気に実行
-    resetBitStates();
-    for (let i = 0; i < plainBits.length; i++) {
-      executeSilentStep(i, plainBits, keyBits, cipherBits);
-    }
-    
-    encryptAnimationState.currentIndex = plainBits.length;
-    updateEncryptProgress(plainBits.length, plainBits.length);
-    updateEncryptButtonStates();
+    stopEncryption();
+    encryptionState.completed = encryptionState.plain.length * 8;
+    refreshEncryption();
   });
-
-  // スピード選択
-  document.getElementById('encryptSpeed').addEventListener('change', (e) => {
-    encryptAnimationState.speed = parseInt(e.target.value);
+  document.getElementById('encryptSpeed').addEventListener('change', e => {
+    encryptPlayback.speed = Number(e.target.value);
+    if (encryptPlayback.playing) playEncryption();
   });
 }
 
-// アニメーションをリセット
-function resetEncryptionAnimation() {
-  clearTimeout(encryptAnimationState.timeoutId);
-  encryptAnimationState.isPlaying = false;
-  encryptAnimationState.isPaused = false;
-  encryptAnimationState.currentIndex = 0;
-  
-  // ビットの状態をリセット
-  resetBitStates();
-}
-
-// ビットの視覚状態をリセット
-function resetBitStates() {
-  // すべてのアクティブ状態を解除
-  document.querySelectorAll('.bit.active').forEach(el => el.classList.remove('active'));
-  
-  // 鍵ビットをリセット
-  document.querySelectorAll('#keyBitsContainer .bit').forEach(el => {
-    el.classList.remove('burn', 'ash');
-  });
-  
-  // 暗号ビットをプレースホルダーに戻す
-  renderPlaceholderCipherBits(plainBits.length);
-}
-
-// アニメーションなしでステップを実行（戻る時用）
-function executeSilentStep(index, plainBits, keyBitsInput, cipherBitsInput) {
-  const keySpan = document.querySelector(`#keyBitsContainer .bit[data-index='${index}']`);
-  const cipherSpan = document.querySelector(`#cipherBitsContainer .bit[data-index='${index}']`);
-  
-  keySpan.classList.add('burn', 'ash');
-  cipherSpan.textContent = cipherBitsInput[index];
-  cipherSpan.classList.remove('placeholder');
-}
-
-// 暗号化タブのイベントハンドラ設定
 function setupEncryptionHandlers() {
-  // 平文リアルタイム入力処理
-  document.getElementById('plaintext').addEventListener('input', () => {
-    const text = document.getElementById('plaintext').value;
-    const { bits, invalidChar } = textToBitsWithValidation(text);
-    const errorArea = document.getElementById('errorMessage');
-
-    if (invalidChar) {
-      console.log(`❌ 平文入力エラー: 使用不可文字 "${invalidChar}"`);
-      errorArea.textContent = `❌ 使用できない文字があります：「${invalidChar}」`;
-      renderBits('plaintextBitsContainer', [], 'plain');
-      plainBits = [];
-      
-      // エラー時は暗号化状態をリセット
-      encryptAnimationState.keysGenerated = false;
-      encryptAnimationState.currentIndex = 0;
-      updateEncryptButtonStates();
-      
-      // エクスポートボタンを無効化
-      const exportButton = document.getElementById('exportEncryption');
-      if (exportButton) exportButton.disabled = true;
-    } else {
-      console.log(`📝 平文入力: "${text}" → ${bits.length}ビット [${bits.join('')}]`);
-      errorArea.textContent = '';
-      renderBits('plaintextBitsContainer', bits, 'plain');
-      plainBits = bits;
-      
-      // 平文が変更されたら暗号化状態をリセット
-      encryptAnimationState.keysGenerated = false;
-      encryptAnimationState.currentIndex = 0;
-      updateEncryptButtonStates();
-      
-      // エクスポートボタンを無効化
-      const exportButton = document.getElementById('exportEncryption');
-      if (exportButton) exportButton.disabled = true;
-    }
-  });
-
-  // 鍵生成ボタン
+  document.getElementById('plaintext').addEventListener('input', updatePlaintext);
   document.getElementById('generateKey').addEventListener('click', () => {
-    const plainText = document.getElementById('plaintext').value;
-    const { bits, invalidChar } = textToBitsWithValidation(plainText);
-    const errorArea = document.getElementById('errorMessage');
-
-    if (invalidChar) {
-      errorArea.textContent = `❌ 使用できない文字があります：「${invalidChar}」`;
-      renderBits('plaintextBitsContainer', [], 'plain');
-      renderBits('keyBitsContainer', [], 'key');
-      renderBits('cipherBitsContainer', [], 'cipher');
-      plainBits = [];
-      keyBits = [];
-      cipherBits = [];
-      return;
-    }
-
-    errorArea.textContent = '';
-    plainBits = bits;
-    keyBits = generateRandomBits(plainBits.length);
-    cipherBits = xorBits(plainBits, keyBits);
-
-    console.log(`🔑 鍵生成: ${keyBits.length}ビット [${keyBits.join('')}]`);
-    console.log(`🔐 暗号文計算: [${cipherBits.join('')}]`);
-
-    renderBits('plaintextBitsContainer', plainBits, 'plain');
-    renderBits('keyBitsContainer', keyBits, 'key');
-    renderPlaceholderCipherBits(plainBits.length);
-    
-    // 暗号化状態を更新
-    encryptAnimationState.keysGenerated = true;
-    encryptAnimationState.totalBits = plainBits.length;
-    encryptAnimationState.currentIndex = 0;
-    updateEncryptButtonStates();
-    updateEncryptProgress(0, plainBits.length);
-    
-    // エクスポートボタンを無効化（まだ暗号化完了していない）
-    const exportButton = document.getElementById('exportEncryption');
-    if (exportButton) exportButton.disabled = true;
+    if (encryptionState.plain.length) setEncryptionKey(OtpCore.randomBytes(encryptionState.plain.length));
   });
-
-  // 🔘 暗号化開始ボタン
-  document.getElementById('startAnimation').addEventListener('click', () => {
-    if (!plainBits.length || !keyBits.length || !cipherBits.length) return;
-    
-    console.log(`▶️ 暗号化アニメーション開始: ${plainBits.length}ステップ`);
-    
-    // アニメーションをリセット
-    resetEncryptionAnimation();
-    animateEncryption(plainBits, keyBits, cipherBits);
-  });
+  document.getElementById('startAnimation').addEventListener('click', playEncryption);
 }

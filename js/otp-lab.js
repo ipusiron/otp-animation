@@ -163,8 +163,8 @@ function demonstrateKeyReuse() {
   keyReuseState.plaintext2 = p2.substring(0, minLength);
   
   // バリデーション
-  const { bits: p1Bits, invalidChar: p1Invalid } = textToBitsWithValidation(keyReuseState.plaintext1);
-  const { bits: p2Bits, invalidChar: p2Invalid } = textToBitsWithValidation(keyReuseState.plaintext2);
+  const { bits: p1Bits, invalidChar: p1Invalid } = validateLabText(keyReuseState.plaintext1);
+  const { bits: p2Bits, invalidChar: p2Invalid } = validateLabText(keyReuseState.plaintext2);
   
   if (p1Invalid || p2Invalid) {
     showToast(`❌ 使用できない文字があります: ${p1Invalid || p2Invalid}`);
@@ -172,15 +172,19 @@ function demonstrateKeyReuse() {
   }
   
   // 同じ鍵を生成
-  keyReuseState.sharedKey = generateRandomBits(p1Bits.length);
+  keyReuseState.sharedKey = OtpCore.bytesToBits(OtpCore.randomBytes(p1Bits.length / 8));
   
   // 暗号化
-  keyReuseState.cipher1 = xorBits(p1Bits, keyReuseState.sharedKey);
-  keyReuseState.cipher2 = xorBits(p2Bits, keyReuseState.sharedKey);
+  keyReuseState.cipher1 = OtpCore.bytesToBits(OtpCore.xorBytes(
+    OtpCore.bitsToBytes(p1Bits), OtpCore.bitsToBytes(keyReuseState.sharedKey)));
+  keyReuseState.cipher2 = OtpCore.bytesToBits(OtpCore.xorBytes(
+    OtpCore.bitsToBytes(p2Bits), OtpCore.bitsToBytes(keyReuseState.sharedKey)));
   
   // 攻撃者による暗号文のXOR（鍵が相殺される）
-  const ciphertextXor = xorBits(keyReuseState.cipher1, keyReuseState.cipher2);
-  const plaintextXor = xorBits(p1Bits, p2Bits);
+  const ciphertextXor = OtpCore.bytesToBits(OtpCore.xorBytes(
+    OtpCore.bitsToBytes(keyReuseState.cipher1), OtpCore.bitsToBytes(keyReuseState.cipher2)));
+  const plaintextXor = OtpCore.bytesToBits(OtpCore.xorBytes(
+    OtpCore.bitsToBytes(p1Bits), OtpCore.bitsToBytes(p2Bits)));
   
   // 結果表示
   displayKeyReuseResults(p1Bits, p2Bits, keyReuseState.sharedKey, 
@@ -233,15 +237,16 @@ function encryptTargetText() {
     return;
   }
   
-  const { bits, invalidChar } = textToBitsWithValidation(plaintext);
+  const { bits, invalidChar } = validateLabText(plaintext);
   if (invalidChar) {
     showToast(`❌ 使用できない文字があります: ${invalidChar}`);
     return;
   }
   
   fragmentAnalysisState.targetPlaintext = plaintext;
-  fragmentAnalysisState.targetKey = generateRandomBits(bits.length);
-  fragmentAnalysisState.targetCipher = xorBits(bits, fragmentAnalysisState.targetKey);
+  fragmentAnalysisState.targetKey = OtpCore.bytesToBits(OtpCore.randomBytes(bits.length / 8));
+  fragmentAnalysisState.targetCipher = OtpCore.bytesToBits(OtpCore.xorBytes(
+    OtpCore.bitsToBytes(bits), OtpCore.bitsToBytes(fragmentAnalysisState.targetKey)));
   
   // 結果表示
   const formatBits = (bits) => bits.map((bit, i) => 
@@ -278,7 +283,7 @@ function analyzeFragment() {
     return;
   }
   
-  const { bits: fragmentBits, invalidChar } = textToBitsWithValidation(knownFragment);
+  const { bits: fragmentBits, invalidChar } = validateLabText(knownFragment);
   if (invalidChar) {
     showToast(`❌ 使用できない文字があります: ${invalidChar}`);
     return;
@@ -290,7 +295,8 @@ function analyzeFragment() {
   const correspondingCipherBits = fragmentAnalysisState.targetCipher.slice(startBit, endBit);
   
   // 鍵を推測 (K = P ⊕ C)
-  const deducedKeyBits = xorBits(fragmentBits, correspondingCipherBits);
+  const deducedKeyBits = OtpCore.bytesToBits(OtpCore.xorBytes(
+    OtpCore.bitsToBytes(fragmentBits), OtpCore.bitsToBytes(correspondingCipherBits)));
   
   // 実際の鍵と比較して検証
   const actualKeyBits = fragmentAnalysisState.targetKey.slice(startBit, endBit);
@@ -535,7 +541,7 @@ function setupOTPLabHandlers() {
 // ASCII入力の検証
 function validateASCIIInput(event) {
   const input = event.target;
-  const { bits, invalidChar } = textToBitsWithValidation(input.value);
+  const { bits, invalidChar } = validateLabText(input.value);
   
   if (invalidChar) {
     input.style.borderColor = '#f44336';
@@ -547,10 +553,11 @@ function validateASCIIInput(event) {
 }
 
 // トースト通知（既存の関数を使用）
-function showToast(message) {
+function showToast(message, type = 'success') {
   const toast = document.getElementById('toast');
   if (toast) {
     toast.textContent = message;
+    toast.className = `toast ${type}`;
     toast.classList.add('show');
     setTimeout(() => {
       toast.classList.remove('show');
@@ -569,4 +576,13 @@ function onOTPLabTabShow() {
   }
   
   console.log('🧪 OTP実験室タブが表示されました');
+}
+
+// ASCII-only experiments use the byte core; encryption supports full UTF-8.
+function validateLabText(text) {
+  const invalidChar = [...text].find(ch => {
+    const bytes = OtpCore.encodeText(ch);
+    return bytes.length !== 1 || bytes[0] < 0x20 || bytes[0] > 0x7e;
+  }) || null;
+  return { bits: invalidChar ? [] : OtpCore.bytesToBits(OtpCore.encodeText(text)), invalidChar };
 }

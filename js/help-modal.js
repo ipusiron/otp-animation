@@ -65,7 +65,8 @@ function setupHelpModalHandlers() {
     }
     
     // ?キーまたはF1キーでヘルプを表示
-    if ((e.key === '?' || e.key === 'F1') && (!modal || !modal.classList.contains('show'))) {
+    const editing = e.target.closest('input, textarea, select, [contenteditable]');
+    if ((e.key === 'F1' || (e.key === '?' && !editing)) && (!modal || !modal.classList.contains('show'))) {
       e.preventDefault();
       showHelpModal();
     }

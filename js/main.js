@@ -23,28 +23,6 @@ window.addEventListener('DOMContentLoaded', () => {
   // OTP実験室タブ機能を初期化
   setupOTPLabHandlers();
 
-  const input = document.getElementById('plaintext');
-  const text = input.value;
-  const { bits, invalidChar } = textToBitsWithValidation(text);
-  const errorArea = document.getElementById('errorMessage');
-
-  if (invalidChar) {
-    errorArea.textContent = `❌ 使用できない文字があります：「${invalidChar}」`;
-    renderBits('plaintextBitsContainer', [], 'plain');
-    return;
-  }
-
-  errorArea.textContent = '';
-  plainBits = bits;
-  renderBits('plaintextBitsContainer', plainBits, 'plain');
-  
-  // 初期状態でボタン状態を更新
-  updateEncryptButtonStates();
-  updateDecryptButtonStates();
-  
-  // 初期状態でエクスポートボタンを無効化
-  const exportEncryptionBtn = document.getElementById('exportEncryption');
-  const exportDecryptionBtn = document.getElementById('exportDecryption');
-  if (exportEncryptionBtn) exportEncryptionBtn.disabled = true;
-  if (exportDecryptionBtn) exportDecryptionBtn.disabled = true;
+  updatePlaintext();
+  refreshDecryption();
 });

@@ -106,13 +106,6 @@ function setupDarkModeHandlers() {
   if (toggleButton) {
     toggleButton.addEventListener('click', toggleDarkMode);
     
-    // キーボードショートカット（Ctrl/Cmd + D）
-    document.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-        e.preventDefault();
-        toggleDarkMode();
-      }
-    });
   }
   
   // システムテーマ変更の監視を開始

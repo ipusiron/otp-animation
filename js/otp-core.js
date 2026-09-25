@@ -94,29 +94,3 @@ const OtpCore = (() => {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = OtpCore;
 }
-
-// Temporary stage-one adapters: keep the existing ASCII screen unchanged.
-function textToBits(text) {
-  return OtpCore.bytesToBits(OtpCore.encodeText(text));
-}
-
-function textToBitsWithValidation(text) {
-  const chars = [...text];
-  const index = chars.findIndex(ch => ch.codePointAt(0) < 32 || ch.codePointAt(0) > 126);
-  return {
-    bits: textToBits(index < 0 ? text : chars.slice(0, index).join('')),
-    invalidChar: index < 0 ? null : chars[index]
-  };
-}
-
-function bitsToText(bits) {
-  return String.fromCharCode(...OtpCore.bitsToBytes(bits));
-}
-
-function generateRandomBits(length) {
-  return OtpCore.bytesToBits(OtpCore.randomBytes(Math.ceil(length / 8))).slice(0, length);
-}
-
-function xorBits(bits1, bits2) {
-  return OtpCore.bytesToBits(OtpCore.xorBytes(OtpCore.bitsToBytes(bits1), OtpCore.bitsToBytes(bits2)));
-}

@@ -1,4 +1,41 @@
 /* ベースレイアウト */
+[hidden] {
+  display: none !important;
+}
+
+.bit-container {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.character-group {
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+.character-label {
+  min-height: 1.5em;
+  font-weight: bold;
+}
+
+.character-bytes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.byte-unit {
+  flex: 0 0 auto;
+}
+
+.byte-hex {
+  font-family: monospace;
+  min-height: 1.5em;
+}
+
+.character-bytes .bit-group {
+  margin: 0;
+}
+
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 2rem;
@@ -89,7 +126,8 @@ body.dark-mode .dark-mode-toggle {
   border-bottom: 1px dotted #666;
 }
 
-.input-section input {
+.input-section input,
+.input-section textarea {
   font-size: 1rem;
   padding: 0.4rem;
   width: 400px;
@@ -101,7 +139,8 @@ body.dark-mode .dark-mode-toggle {
   transition: all 0.3s ease;
 }
 
-body.dark-mode .input-section input {
+body.dark-mode .input-section input,
+body.dark-mode .input-section textarea {
   background: #2d2d2d;
   border-color: #555;
   color: #e0e0e0;
