@@ -38,3 +38,34 @@ test('editing question marks and browser bookmark shortcut are preserved', () =>
   assert.match(read('js/help-modal.js'), /e\.key === '\?' && !editing/);
   assert.doesNotMatch(read('js/dark-mode.js'), /e\.ctrlKey|e\.metaKey/);
 });
+
+test('CSP, referrer and noscript are present without inline executable content', () => {
+  const html = read('index.html');
+  assert.match(html, /http-equiv="Content-Security-Policy"/);
+  assert.match(html, /style-src 'self'/);
+  assert.doesNotMatch(html, /unsafe-inline|frame-ancestors|\sstyle=|<style\b|\son\w+=/i);
+  assert.match(html, /name="referrer" content="no-referrer"/);
+  assert.match(html, /<noscript>/);
+  assert.match(html.split('</head>')[0], /<script src="js\/theme-init.js"><\/script>/);
+});
+
+test('tabs, dialog, controls and labels expose accessible semantics', () => {
+  const html = read('index.html');
+  assert.equal((html.match(/role="tab"/g) || []).length, 4);
+  assert.equal((html.match(/role="tabpanel"/g) || []).length, 4);
+  assert.equal((html.match(/aria-selected=/g) || []).length, 4);
+  assert.match(html, /id="helpModal"[^>]*role="dialog"[^>]*aria-modal="true"/);
+  for (const tag of html.match(/<button\b[^>]*>/g)) assert.match(tag, /type="button"/);
+  for (const [, id] of html.matchAll(/<label[^>]*for="([^"]+)"/g)) assert.ok(html.includes(`id="${id}"`), id);
+  for (const tag of html.match(/<a\b[^>]*target="_blank"[^>]*>/g)) assert.match(tag, /rel="noopener noreferrer"/);
+});
+
+test('application scripts contain no logging, inline style mutation or blocking prompts', () => {
+  for (const file of fs.readdirSync(path.join(root, 'js'))) {
+    assert.doesNotMatch(read(`js/${file}`), /console\.(?:log|warn)|\.style\.|\b(?:prompt|alert)\s*\(/);
+  }
+});
+
+test('saved dark root class styles the body before application initialization', () => {
+  assert.match(read('style.css'), /html\.dark-mode body\s*\{[^}]*background: #1a1a1a;[^}]*color: #e0e0e0;/);
+});

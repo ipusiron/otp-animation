@@ -1,12 +1,15 @@
+let helpReturnFocus = null;
 // ヘルプモーダル機能
 
 // ヘルプモーダルを表示
 function showHelpModal() {
   const modal = document.getElementById('helpModal');
   if (modal) {
+    helpReturnFocus = document.activeElement;
     modal.classList.add('show');
-    document.body.style.overflow = 'hidden'; // 背景のスクロールを無効化
-    console.log('❓ ヘルプモーダルを開きました');
+    document.getElementById('closeHelp').focus();
+    document.body.classList.add('modal-open'); // 背景のスクロールを無効化
+
   }
 }
 
@@ -15,8 +18,9 @@ function hideHelpModal() {
   const modal = document.getElementById('helpModal');
   if (modal) {
     modal.classList.remove('show');
-    document.body.style.overflow = ''; // 背景のスクロールを復元
-    console.log('❓ ヘルプモーダルを閉じました');
+    if (helpReturnFocus) helpReturnFocus.focus();
+    document.body.classList.remove('modal-open'); // 背景のスクロールを復元
+
   }
 }
 
@@ -58,6 +62,14 @@ function setupHelpModalHandlers() {
   document.addEventListener('keydown', (e) => {
     const modal = document.getElementById('helpModal');
     
+    if (e.key === 'Tab' && modal.classList.contains('show')) {
+      const items = [...modal.querySelectorAll('button, a[href], input, select, textarea, [tabindex="0"]')]
+        .filter(item => !item.disabled && item.getClientRects().length);
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
     // Escキーでモーダルを閉じる
     if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
       e.preventDefault();
@@ -88,21 +100,4 @@ function setupHelpModalHandlers() {
     });
   }
 
-  console.log('❓ ヘルプモーダル機能が有効になりました（? または F1 キーで表示、Esc で閉じる）');
-}
-
-// ヘルプセクションへのスムーズスクロール機能（将来の拡張用）
-function scrollToHelpSection(sectionId) {
-  const modal = document.getElementById('helpModal');
-  const section = document.getElementById(sectionId);
-  
-  if (modal && section && modal.classList.contains('show')) {
-    const modalBody = modal.querySelector('.modal-body');
-    const sectionTop = section.offsetTop;
-    
-    modalBody.scrollTo({
-      top: sectionTop - 20, // 少し余白を持たせる
-      behavior: 'smooth'
-    });
-  }
 }

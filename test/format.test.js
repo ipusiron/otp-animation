@@ -7,9 +7,12 @@ const path = require('node:path');
 const read = name => fs.readFileSync(path.join(__dirname, '..', name), 'utf8');
 
 test('new JavaScript and tests remain readable', () => {
-  for (const name of ['js/otp-core.js', 'test/core.test.js', 'test/format.test.js']) {
+  const names = ['style.css', ...['js', 'test'].flatMap(dir =>
+    fs.readdirSync(path.join(__dirname, '..', dir)).filter(name => name.endsWith('.js')).map(name => `${dir}/${name}`))];
+  for (const name of names) {
     read(name).split(/\r?\n/).forEach((line, i) => assert.ok(line.length <= 160, `${name}:${i + 1}`));
   }
+  read('index.html').split(/\r?\n/).forEach((line, i) => assert.ok(line.length <= 250, `index.html:${i + 1}`));
 });
 
 test('existing document and stylesheet structure is retained', () => {

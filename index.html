@@ -2,50 +2,59 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <script src="js/theme-init.js"></script>
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OTP Animation</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <noscript>JavaScriptを有効にしてください。<br>Please enable JavaScript.</noscript>
   <div class="container">
     <div class="header-controls">
       <h1>OTP Animation 🔥</h1>
       <div class="control-buttons">
-        <button id="helpButton" class="control-button" title="ヘルプを表示">
+        <button type="button" id="helpButton" class="control-button" title="ヘルプを表示" aria-label="ヘルプを表示">
           ❓
         </button>
-        <button id="darkModeToggle" class="control-button dark-mode-toggle" title="ダークモード切り替え">
+        <button type="button" id="darkModeToggle" class="control-button dark-mode-toggle" title="ダークモード切り替え" aria-label="ダークモード切り替え">
           🌙
         </button>
       </div>
     </div>
 
-    <div class="tabs">
-      <button class="tab-button active" data-tab="encrypt">暗号化</button>
-      <button class="tab-button" data-tab="decrypt">復号</button>
-      <button class="tab-button" data-tab="xor-basics">XORの基礎</button>
-      <button class="tab-button" data-tab="otp-lab">OTP実験室</button>
+    <div class="tabs" role="tablist" aria-label="学習タブ">
+      <button type="button" class="tab-button active" data-tab="encrypt"
+        id="tab-encrypt" role="tab" aria-selected="true" aria-controls="encrypt-tab" tabindex="0">暗号化</button>
+      <button type="button" class="tab-button" data-tab="decrypt"
+        id="tab-decrypt" role="tab" aria-selected="false" aria-controls="decrypt-tab" tabindex="-1">復号</button>
+      <button type="button" class="tab-button" data-tab="xor-basics"
+        id="tab-xor-basics" role="tab" aria-selected="false" aria-controls="xor-basics-tab" tabindex="-1">XORの基礎</button>
+      <button type="button" class="tab-button" data-tab="otp-lab"
+        id="tab-otp-lab" role="tab" aria-selected="false" aria-controls="otp-lab-tab" tabindex="-1">OTP実験室</button>
     </div>
 
     <div class="tab-content">
       <!-- 暗号化タブ -->
-      <div id="encrypt-tab" class="tab-panel active">
+      <div id="encrypt-tab" class="tab-panel active" role="tabpanel" aria-labelledby="tab-encrypt">
         <div class="input-section">
           <label for="plaintext" title="UTF-8のバイト列へ変換します。日本語・絵文字も入力できます">平文（UTF-8、64バイトまで）</label>
           <textarea id="plaintext" rows="1">HELLO</textarea>
           <div id="plainCount"></div>
-          <div id="errorMessage" class="error-message"></div>
-          <button id="generateKey">🔑 鍵を生成</button>
-          <button id="startAnimation">▶ 暗号化開始</button>
+          <div id="errorMessage" class="error-message" aria-live="polite"></div>
+          <button type="button" id="generateKey">🔑 鍵を生成</button>
+          <button type="button" id="startAnimation">▶ 暗号化開始</button>
         </div>
         
         <div class="animation-controls" id="encryptAnimationControls" hidden>
           <div class="control-group">
-            <button id="encryptReset" class="control-btn reset-btn">🔄 リセット</button>
-            <button id="encryptStepBack" class="control-btn">⏮ 1つ戻る</button>
-            <button id="encryptPlayPause" class="control-btn">⏸ 一時停止</button>
-            <button id="encryptStepForward" class="control-btn">⏭ 1つ進む</button>
-            <button id="encryptComplete" class="control-btn complete-btn">⏩ 全処理</button>
+            <button type="button" id="encryptReset" class="control-btn reset-btn">🔄 リセット</button>
+            <button type="button" id="encryptStepBack" class="control-btn">⏮ 1つ戻る</button>
+            <button type="button" id="encryptPlayPause" class="control-btn">⏸ 一時停止</button>
+            <button type="button" id="encryptStepForward" class="control-btn">⏭ 1つ進む</button>
+            <button type="button" id="encryptComplete" class="control-btn complete-btn">⏩ 全処理</button>
           </div>
           <div class="control-group">
             <label for="encryptSpeed" class="speed-label">速度:</label>
@@ -56,7 +65,7 @@
               <option value="1000">低速 (1秒)</option>
               <option value="2000">極低速 (2秒)</option>
             </select>
-            <span class="progress-indicator" id="encryptProgress">0 / 0</span>
+            <span class="progress-indicator" id="encryptProgress" aria-live="polite">0 / 0</span>
           </div>
         </div>
 
@@ -65,8 +74,8 @@
             <div class="bit-row-header">
               <h2>平文ビット</h2>
               <div class="bit-buttons">
-                <button class="copy-bit-btn" id="copyPlaintextBits" title="平文ビット列をコピー">📋</button>
-                <button class="paste-bit-btn" id="pastePlaintextBits" title="平文ビット列をペースト">📄</button>
+                <button type="button" class="copy-bit-btn" id="copyPlaintextBits" title="平文ビット列をコピー" aria-label="平文ビット列をコピー">📋</button>
+                <button type="button" class="paste-bit-btn" id="pastePlaintextBits" title="平文ビット列をペースト" aria-label="平文ビット列をペースト">📄</button>
               </div>
             </div>
             <div class="bit-container" id="plaintextBitsContainer"></div>
@@ -75,8 +84,8 @@
             <div class="bit-row-header">
               <h2>鍵ビット</h2>
               <div class="bit-buttons">
-                <button class="copy-bit-btn" id="copyKeyBits" title="鍵ビット列をコピー">📋</button>
-                <button class="paste-bit-btn" id="pasteKeyBits" title="鍵ビット列をペースト">📄</button>
+                <button type="button" class="copy-bit-btn" id="copyKeyBits" title="鍵ビット列をコピー" aria-label="鍵ビット列をコピー">📋</button>
+                <button type="button" class="paste-bit-btn" id="pasteKeyBits" title="鍵ビット列をペースト" aria-label="鍵ビット列をペースト">📄</button>
               </div>
             </div>
             <div class="bit-container" id="keyBitsContainer"></div>
@@ -84,39 +93,39 @@
           <div class="bit-row" id="cipherBits">
             <div class="bit-row-header">
               <h2>暗号文ビット</h2>
-              <button class="copy-bit-btn" id="copyCipherBits" title="暗号文ビット列をコピー">📋</button>
+              <button type="button" class="copy-bit-btn" id="copyCipherBits" title="暗号文ビット列をコピー" aria-label="暗号文ビット列をコピー">📋</button>
             </div>
             <div class="bit-container" id="cipherBitsContainer"></div>
           </div>
         </div>
         
         <div class="export-section">
-          <button id="exportEncryption" class="export-btn" disabled>📄 結果を外部出力</button>
+          <button type="button" id="exportEncryption" class="export-btn" disabled>📄 結果を外部出力</button>
         </div>
       </div>
 
       <!-- 復号タブ -->
-      <div id="decrypt-tab" class="tab-panel">
+      <div id="decrypt-tab" class="tab-panel" role="tabpanel" aria-labelledby="tab-decrypt">
         <div class="input-section">
-          <button id="copyFromEncryption" class="copy-btn">📋 暗号化タブから受け取る</button>
+          <button type="button" id="copyFromEncryption" class="copy-btn">📋 暗号化タブから受け取る</button>
           <label for="ciphertext">暗号文の16進数（例: 61 37 F7 48 02）</label>
           <input id="ciphertext" type="text" value="" />
           <p>暗号文は16進数（例: 61 37 F7 48 02）で入力してください</p>
           <label for="decryptKey">鍵の16進数</label>
           <input id="decryptKey" type="text" value="" />
-          <div id="decryptErrorMessage" class="error-message"></div>
-          <button id="generateDecryptKey">🎲 でたらめな鍵を試す</button>
+          <div id="decryptErrorMessage" class="error-message" aria-live="polite"></div>
+          <button type="button" id="generateDecryptKey">🎲 でたらめな鍵を試す</button>
           <p>正しい鍵でないと、意味のない文字列になります（鍵を知らなければ平文は分からない）</p>
-          <button id="startDecryption">▶ 復号開始</button>
+          <button type="button" id="startDecryption">▶ 復号開始</button>
         </div>
         
         <div class="animation-controls" id="decryptAnimationControls" hidden>
           <div class="control-group">
-            <button id="decryptReset" class="control-btn reset-btn">🔄 リセット</button>
-            <button id="decryptStepBack" class="control-btn">⏮ 1つ戻る</button>
-            <button id="decryptPlayPause" class="control-btn">⏸ 一時停止</button>
-            <button id="decryptStepForward" class="control-btn">⏭ 1つ進む</button>
-            <button id="decryptComplete" class="control-btn complete-btn">⏩ 全処理</button>
+            <button type="button" id="decryptReset" class="control-btn reset-btn">🔄 リセット</button>
+            <button type="button" id="decryptStepBack" class="control-btn">⏮ 1つ戻る</button>
+            <button type="button" id="decryptPlayPause" class="control-btn">⏸ 一時停止</button>
+            <button type="button" id="decryptStepForward" class="control-btn">⏭ 1つ進む</button>
+            <button type="button" id="decryptComplete" class="control-btn complete-btn">⏩ 全処理</button>
           </div>
           <div class="control-group">
             <label for="decryptSpeed" class="speed-label">速度:</label>
@@ -127,7 +136,7 @@
               <option value="1000">低速 (1秒)</option>
               <option value="2000">極低速 (2秒)</option>
             </select>
-            <span class="progress-indicator" id="decryptProgress">0 / 0</span>
+            <span class="progress-indicator" id="decryptProgress" aria-live="polite">0 / 0</span>
           </div>
         </div>
 
@@ -136,8 +145,8 @@
             <div class="bit-row-header">
               <h2>暗号文ビット</h2>
               <div class="bit-buttons">
-                <button class="copy-bit-btn" id="copyCiphertextBits" title="暗号文ビット列をコピー">📋</button>
-                <button class="paste-bit-btn" id="pasteCiphertextBits" title="暗号文ビット列をペースト">📄</button>
+                <button type="button" class="copy-bit-btn" id="copyCiphertextBits" title="暗号文ビット列をコピー" aria-label="暗号文ビット列をコピー">📋</button>
+                <button type="button" class="paste-bit-btn" id="pasteCiphertextBits" title="暗号文ビット列をペースト" aria-label="暗号文ビット列をペースト">📄</button>
               </div>
             </div>
             <div class="bit-container" id="ciphertextBitsContainer"></div>
@@ -146,8 +155,8 @@
             <div class="bit-row-header">
               <h2>鍵ビット</h2>
               <div class="bit-buttons">
-                <button class="copy-bit-btn" id="copyDecryptKeyBits" title="鍵ビット列をコピー">📋</button>
-                <button class="paste-bit-btn" id="pasteDecryptKeyBits" title="鍵ビット列をペースト">📄</button>
+                <button type="button" class="copy-bit-btn" id="copyDecryptKeyBits" title="鍵ビット列をコピー" aria-label="鍵ビット列をコピー">📋</button>
+                <button type="button" class="paste-bit-btn" id="pasteDecryptKeyBits" title="鍵ビット列をペースト" aria-label="鍵ビット列をペースト">📄</button>
               </div>
             </div>
             <div class="bit-container" id="decryptKeyBitsContainer"></div>
@@ -155,7 +164,7 @@
           <div class="bit-row" id="decryptedBits">
             <div class="bit-row-header">
               <h2>平文ビット</h2>
-              <button class="copy-bit-btn" id="copyDecryptedBits" title="平文ビット列をコピー">📋</button>
+              <button type="button" class="copy-bit-btn" id="copyDecryptedBits" title="平文ビット列をコピー" aria-label="平文ビット列をコピー">📋</button>
             </div>
             <div class="bit-container" id="decryptedBitsContainer"></div>
             <p id="decryptedText" aria-live="polite"></p>
@@ -165,12 +174,12 @@
         </div>
         
         <div class="export-section">
-          <button id="exportDecryption" class="export-btn" disabled>📄 結果を外部出力</button>
+          <button type="button" id="exportDecryption" class="export-btn" disabled>📄 結果を外部出力</button>
         </div>
       </div>
 
       <!-- XORの基礎タブ -->
-      <div id="xor-basics-tab" class="tab-panel">
+      <div id="xor-basics-tab" class="tab-panel" role="tabpanel" aria-labelledby="tab-xor-basics">
         <div class="xor-explanation">
           <h2>🔗 XOR（排他的論理和）とは？</h2>
           
@@ -183,6 +192,7 @@
           <div class="explanation-section">
             <h3>📊 XOR真理値表</h3>
             <div class="truth-table-container">
+              <div class="table-scroll">
               <table class="truth-table">
                 <thead>
                   <tr>
@@ -219,6 +229,7 @@
                   </tr>
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
 
@@ -323,7 +334,6 @@
                     <!-- XORゲートの背面曲線（特徴的な二重線） -->
                     <path d="M 15 25 Q 35 60 15 95" 
                           fill="none" stroke="#333" stroke-width="2"/>
-                    
                     <!-- XORゲートのメイン形状 -->
                     <path d="M 25 25 Q 45 60 25 95" 
                           fill="none" stroke="#333" stroke-width="2"/>
@@ -343,15 +353,7 @@
                     <text x="135" y="65" font-family="Arial" font-size="14" fill="#333">A ⊕ B</text>
                     
                     <!-- ダークモード対応 -->
-                    <style>
-                      body.dark-mode .xor-gate-svg path,
-                      body.dark-mode .xor-gate-svg line {
-                        stroke: #e0e0e0;
-                      }
-                      body.dark-mode .xor-gate-svg text {
-                        fill: #e0e0e0;
-                      }
-                    </style>
+
                   </svg>
                 </div>
                 
@@ -436,6 +438,7 @@
           <div class="explanation-section">
             <h3>🔄 XORと他の論理演算の比較</h3>
             <div class="logic-comparison">
+              <div class="table-scroll">
               <table class="comparison-table">
                 <thead>
                   <tr>
@@ -487,6 +490,7 @@
                   </tr>
                 </tbody>
               </table>
+              </div>
             </div>
             
             <p><strong>XORの独特さ:</strong> XORは唯一「可逆性」を持つ基本論理演算です。この性質が暗号での応用を可能にしています。</p>
@@ -495,7 +499,7 @@
       </div>
 
       <!-- OTP実験室タブ -->
-      <div id="otp-lab-tab" class="tab-panel">
+      <div id="otp-lab-tab" class="tab-panel" role="tabpanel" aria-labelledby="tab-otp-lab">
         <div class="lab-introduction">
           <h2>🧪 OTP実験室</h2>
           <p>ワンタイムパッド（OTP）の特性と脆弱性を実験を通して学習します。</p>
@@ -551,8 +555,8 @@
                     </pattern>
                     <!-- グラデーション定義 -->
                     <linearGradient id="gateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.1"/>
-                      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.1"/>
+                      <stop offset="0%" class="gradient-start"/>
+                      <stop offset="100%" class="gradient-end"/>
                     </linearGradient>
                     <!-- シャドウ効果 -->
                     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
@@ -659,6 +663,7 @@
 
               <div class="gate-results">
                 <div class="result-table">
+                  <div class="table-scroll">
                   <table>
                     <thead>
                       <tr>
@@ -683,6 +688,7 @@
                       </tr>
                     </tbody>
                   </table>
+              </div>
                 </div>
                 
                 <div class="construction-explanation">
@@ -734,10 +740,11 @@
                   <input type="text" id="plaintext2" value="XY" maxlength="10">
                 </div>
                 
-                <button id="demonstrateReuse" class="demo-button">🔍 脆弱性を実証</button>
+                <button type="button" id="demonstrateReuse" class="demo-button">🔍 脆弱性を実証</button>
               </div>
 
-              <div class="reuse-results" id="reuseResults" style="display: none;">
+              <div class="reuse-results" id="reuseResults" hidden>
+                <p id="reuseLengthNote" aria-live="polite"></p>
                 <div class="step-display">
                   <h5>📊 計算過程</h5>
                   
@@ -830,11 +837,11 @@
                 <div class="input-group">
                   <label for="targetPlaintext">対象平文:</label>
                   <input type="text" id="targetPlaintext" value="SECRET" maxlength="10">
-                  <button id="encryptTarget" class="demo-button">🔒 暗号化</button>
+                  <button type="button" id="encryptTarget" class="demo-button">🔒 暗号化</button>
                 </div>
               </div>
 
-              <div class="encrypted-display" id="encryptedDisplay" style="display: none;">
+              <div class="encrypted-display" id="encryptedDisplay" hidden>
                 <h5>📤 暗号化結果</h5>
                 <div class="bit-display-small">
                   <div class="bit-row-small">
@@ -852,7 +859,7 @@
                 </div>
               </div>
 
-              <div class="fragment-input" id="fragmentInput" style="display: none;">
+              <div class="fragment-input" id="fragmentInput" hidden>
                 <h5>🕵️ 攻撃シナリオ</h5>
                 <p>攻撃者が平文の一部を知っているとします:</p>
                 
@@ -861,11 +868,11 @@
                   <input type="text" id="knownFragment" maxlength="10" placeholder="例: SE">
                   <label for="fragmentPosition">位置（文字目）:</label>
                   <input type="number" id="fragmentPosition" min="1" max="10" value="1">
-                  <button id="analyzeFragment" class="demo-button">🔍 鍵を推測</button>
+                  <button type="button" id="analyzeFragment" class="demo-button">🔍 鍵を推測</button>
                 </div>
               </div>
 
-              <div class="analysis-results" id="analysisResults" style="display: none;">
+              <div class="analysis-results" id="analysisResults" hidden>
                 <h5>📊 解析結果</h5>
                 
                 <div class="deduced-key">
@@ -933,11 +940,11 @@
   </div>
 
   <!-- ヘルプモーダル -->
-  <div id="helpModal" class="modal">
+  <div id="helpModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>🔥 OTP Animation ヘルプ</h2>
-        <button class="modal-close" id="closeHelp">&times;</button>
+        <h2 id="helpTitle">🔥 OTP Animation ヘルプ</h2>
+        <button type="button" class="modal-close" id="closeHelp" aria-label="閉じる">&times;</button>
       </div>
       <div class="modal-body">
         <div class="help-section">
@@ -1070,7 +1077,7 @@
   </div>
 
   <!-- トースト通知 -->
-  <div id="toast" class="toast"></div>
+  <div id="toast" class="toast" aria-live="polite"></div>
 
   <script src="js/otp-core.js"></script>
   <script src="js/bit-operations.js"></script>

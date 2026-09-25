@@ -9,11 +9,12 @@ const DARK_MODE_KEY = 'otp-animation-dark-mode';
 // ダークモードの初期化
 function initializeDarkMode() {
   // ローカルストレージから設定を読み込み
-  const savedMode = localStorage.getItem(DARK_MODE_KEY);
+  let savedMode = null;
+  try { savedMode = localStorage.getItem(DARK_MODE_KEY); } catch {}
   
-  if (savedMode === 'true') {
+  if (savedMode === 'dark') {
     enableDarkMode();
-  } else if (savedMode === 'false') {
+  } else if (savedMode === 'light') {
     disableDarkMode();
   } else {
     // 初回訪問時はシステム設定に従う
@@ -23,16 +24,16 @@ function initializeDarkMode() {
       disableDarkMode();
     }
   }
-  
-  console.log(`🌙 ダークモード初期化: ${isDarkMode ? 'ON' : 'OFF'}`);
+
 }
 
 // ダークモードを有効にする
 function enableDarkMode() {
   isDarkMode = true;
+  document.documentElement.classList.add('dark-mode');
   document.body.classList.add('dark-mode');
   updateToggleButton();
-  localStorage.setItem(DARK_MODE_KEY, 'true');
+  try { localStorage.setItem(DARK_MODE_KEY, 'dark'); } catch {}
   
   // OTP実験室タブが表示されている場合、回路の色を更新
   if (document.getElementById('otp-lab-tab')?.classList.contains('active')) {
@@ -45,9 +46,10 @@ function enableDarkMode() {
 // ダークモードを無効にする
 function disableDarkMode() {
   isDarkMode = false;
+  document.documentElement.classList.remove('dark-mode');
   document.body.classList.remove('dark-mode');
   updateToggleButton();
-  localStorage.setItem(DARK_MODE_KEY, 'false');
+  try { localStorage.setItem(DARK_MODE_KEY, 'light'); } catch {}
   
   // OTP実験室タブが表示されている場合、回路の色を更新
   if (document.getElementById('otp-lab-tab')?.classList.contains('active')) {
@@ -70,10 +72,10 @@ function updateToggleButton() {
 function toggleDarkMode() {
   if (isDarkMode) {
     disableDarkMode();
-    console.log('🌙 → ☀️ ライトモードに切り替え');
+
   } else {
     enableDarkMode();
-    console.log('☀️ → 🌙 ダークモードに切り替え');
+
   }
 }
 
@@ -84,15 +86,16 @@ function setupSystemThemeListener() {
     
     mediaQuery.addEventListener('change', (e) => {
       // ユーザーが手動で設定を変更していない場合のみシステム設定に従う
-      const hasUserPreference = localStorage.getItem(DARK_MODE_KEY) !== null;
+      let hasUserPreference = false;
+      try { hasUserPreference = ['light', 'dark'].includes(localStorage.getItem(DARK_MODE_KEY)); } catch {}
       
       if (!hasUserPreference) {
         if (e.matches) {
           enableDarkMode();
-          console.log('💻 システム設定変更: ダークモードに自動切り替え');
+
         } else {
           disableDarkMode();
-          console.log('💻 システム設定変更: ライトモードに自動切り替え');
+
         }
       }
     });
@@ -110,6 +113,5 @@ function setupDarkModeHandlers() {
   
   // システムテーマ変更の監視を開始
   setupSystemThemeListener();
-  
-  console.log('🌙 ダークモード機能が有効になりました（Ctrl/Cmd + D で切り替え可能）');
+
 }
