@@ -4,7 +4,7 @@
 
 OTP Animation is Day029 of 100 Security Tools with Generative AI.
 This dependency-free, static MIT-licensed educational app visualizes byte-based OTP with four tabs:
-encryption, decryption, XOR basics and three OTP lab experiments.
+encryption, decryption, XOR basics and six OTP lab experiments.
 
 ## Key Commands
 
@@ -26,7 +26,7 @@ encryption, decryption, XOR basics and three OTP lab experiments.
 - `js/theme-init.js`: synchronous theme selection before first paint.
 - `js/dark-mode.js`: theme switching and safe storage access.
 - `js/i18n.js`: matching Japanese/English dictionaries and state-preserving switching.
-- `js/xor-basics.js`, `otp-lab.js`: XOR basics, gate construction, key reuse and fragment recovery.
+- `js/xor-basics.js`, `otp-lab.js`: XOR basics, gate construction, key reuse, fragment recovery, crib dragging, secrecy and tampering.
 - `js/main.js`: initialization.
 
 Keep classic scripts so that file:// works without a server, fetch or modules.
@@ -41,8 +41,20 @@ Generate keys only with crypto.getRandomValues. Deterministic test keys must nev
 Derive known answers and README tables from OtpCore; do not change reference expectations to pass tests.
 
 Editing input stops playback and invalidates old results. Never keep a separate mutable result representation.
-The lab intentionally accepts ASCII 32–126 only, while encryption/decryption support full UTF-8.
+Experiments 2–4 and 6 accept printable ASCII 32–126; experiment 5 supports UTF-8 like encryption/decryption.
 A known plaintext fragment reveals only its corresponding key fragment.
+
+The core exports CRIB_SAMPLE, isReadable, cribDrag, assemble, forgeKey and flip in addition to the original API.
+Keep the reference implementations unchanged, including readability characters, conflict handling and exception messages.
+Derive all experiment values from OtpCore, not duplicated arithmetic in UI or documentation.
+CRIB_SAMPLE has two 33-byte messages; the default space-padded THE crib has readable one-based positions 5, 11 and 21.
+Only exact assembly of both sample plaintexts is completion; readability is not proof that a guess is correct.
+forgeKey maps fixed ciphertext to any equal-byte-length alternative; flip never receives the key.
+Default tampering changes PAY 100 YEN TO BOB into PAY 900 YEN TO BOB, with only byte 5 differing by 08.
+Keep cribState placements, secrecyState ciphertext/keys and tamperState results in memory only.
+Changing source plaintext clears old cryptographic state; language switching and accordion folding preserve it.
+Keys are generated on explicit encryption actions, never on accordion expansion.
+Secrecy does not provide integrity: explain MACs and authenticated encryption such as AES-GCM.
 
 Perfect secrecy requires truly random, equal-length, secret keys used once.
 The animation does not securely erase memory. This app and its key-containing exports are educational, not production security.
@@ -75,6 +87,7 @@ Do not store plaintext, keys, ciphertext or experiment data.
 ## Tests
 
 - core.test.js: six known answers, validation, 200 mixed UTF-8 round trips, hex/bits and weak RNG prohibition.
+- Additional core tests: five crib cases, assembly/conflicts, secrecy/tampering references and 100 property cases for each transformation.
 - i18n.test.js: key parity, nonempty values, usage, placeholders and Japanese literal prohibition.
 - html.test.js: CSP, ARIA, labels, safe APIs, early dark styling and noninteractive toasts.
 - contrast.test.js: actual theme variables and required light/dark contrast pairs.

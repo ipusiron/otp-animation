@@ -540,6 +540,7 @@ function labASCII(value, maximum) {
 function resetCrib() {
   Object.assign(cribState, { x: null, placements: [], candidates: [], searched: '', error: '' });
   for (const id of ['cribC1', 'cribC2', 'cribX', 'cribLength']) labElement(id).textContent = '';
+  i18n.assign(labElement('cribLength'), 'textContent', '');
   renderCrib();
 }
 

@@ -3,6 +3,9 @@
 // All user-facing messages live here. Classic script keeps file:// support.
 const i18n = (() => {
   const ja = {
+    'help.crib': '実験4：新しい鍵で暗号化し、前後に空白を含む「 THE 」を当てます。位置11で平文1、位置21で平文2に置くと断片がつながります。読める候補が正解とは限らず、取り消し・ヒントで確かめます。',
+    'help.secrecy': '実験5：ATTACK AT DAWNを暗号化し、別の平文にRETREAT AT SIXや撤退せよ!!を入れます。同じ14バイトなら、それに復号される鍵があります。バイト数が違えば案内を表示します。',
+    'help.tamper': '実験6：PAY 100 YEN TO BOBを暗号化し、位置5の100を900に書き換えます。鍵なしで差分08が生じ、受信者にはPAY 900 YEN TO BOBと届きます。改ざん検知には認証が必要です。',
     'advanced.utf8': '平文は空にせず、制御文字を含まない UTF-8 の64バイト以内で入れてください。',
     'advanced.encrypt': '🔑 鍵を生成して暗号化',
     'advanced.cipher': '暗号文 C（16進数）',
@@ -350,7 +353,7 @@ const i18n = (() => {
     "ui.284": ": モーダルを閉じる",
     "ui.285": "🔗 技術情報",
     "ui.286": "対応文字",
-    "ui.287": ": UTF-8で64バイトまで。実験室はASCII 32〜126",
+    "ui.287": ": UTF-8で64バイトまで。実験2〜4・6はASCII 32〜126、実験5はUTF-8",
     "ui.288": "ビット表現",
     "ui.289": ": 1バイト8ビット、上位ビットから表示。1文字が複数バイトになる場合あり",
     "ui.290": "ブラウザー要件",
@@ -423,6 +426,12 @@ const i18n = (() => {
     "export.note": "※ 鍵が真にランダムで、平文と同じ長さで、一度しか使わず、秘密に保たれるときに限り、暗号文から平文の情報は得られません（完全秘匿性）。このファイルには鍵が含まれるため、教材としての記録です。"
   };
   const en = {
+    'help.crib': 'Experiment 4: encrypt with a new key and try “ THE ” with surrounding spaces. Place it in plaintext 1 at position 11 and ' +
+      'plaintext 2 at position 21. Readable guesses are not necessarily correct; use undo and hints to check them.',
+    'help.secrecy': 'Experiment 5: encrypt ATTACK AT DAWN, then try RETREAT AT SIX or the Japanese example as an alternative. ' +
+      'Each 14-byte plaintext has a corresponding key. A different byte length produces a validation message.',
+    'help.tamper': 'Experiment 6: encrypt PAY 100 YEN TO BOB and replace 100 with 900 at position 5. ' +
+      'Without the key, a difference of 08 changes the received text to PAY 900 YEN TO BOB. Authentication is needed to detect tampering.',
     'advanced.utf8': 'Enter nonempty UTF-8 text of at most 64 bytes, without control characters.',
     'advanced.encrypt': '🔑 Generate Key and Encrypt',
     'advanced.cipher': 'Ciphertext C (hexadecimal)',
@@ -784,7 +793,7 @@ const i18n = (() => {
     "ui.284": ": close the dialog",
     "ui.285": "🔗 Technical Information",
     "ui.286": "Supported text",
-    "ui.287": ": UTF-8 up to 64 bytes; laboratory experiments accept printable ASCII (32–126)",
+    "ui.287": ": UTF-8 up to 64 bytes; experiments 2–4 and 6 accept printable ASCII (32–126), while experiment 5 accepts UTF-8",
     "ui.288": "Bit representation",
     "ui.289": ": 8 bits per byte, most significant bit first; a character may span multiple bytes",
     "ui.290": "Browser requirements",
