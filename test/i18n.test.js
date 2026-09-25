@@ -18,6 +18,14 @@ test('crib experiment has bilingual instructions and outcome messages', () => {
   }
 });
 
+test('secrecy and tampering have bilingual instructions and validation messages', () => {
+  for (const key of ['secrecy.title', 'secrecy.intro', 'secrecy.length', 'secrecy.summary', 'secrecy.hint',
+    'tamper.title', 'tamper.intro', 'tamper.summary', 'tamper.lengthMismatch', 'tamper.outOfRange']) {
+    assert.ok(i18n.ja[key]);
+    assert.ok(i18n.en[key]);
+  }
+});
+
 test('Japanese and English dictionaries have identical nonempty keys', () => {
   assert.deepEqual(Object.keys(i18n.ja).sort(), Object.keys(i18n.en).sort());
   for (const dictionary of [i18n.ja, i18n.en]) {

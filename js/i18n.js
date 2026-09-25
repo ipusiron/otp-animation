@@ -3,6 +3,36 @@
 // All user-facing messages live here. Classic script keeps file:// support.
 const i18n = (() => {
   const ja = {
+    'advanced.utf8': '平文は空にせず、制御文字を含まない UTF-8 の64バイト以内で入れてください。',
+    'advanced.encrypt': '🔑 鍵を生成して暗号化',
+    'advanced.cipher': '暗号文 C（16進数）',
+    'secrecy.title': '🎭 実験5: 完全秘匿性（どの平文もあり得る）',
+    'secrecy.intro': '鍵が真にランダムで、平文と同じ長さで、一度だけ使われ、秘密に保たれるなら、暗号文だけでは平文を絞れません。同じバイト数の平文なら、どれにでも復号される鍵が存在します。',
+    'secrecy.plain': '平文（UTF-8、64バイトまで）',
+    'secrecy.alternate': '別の平文（同じバイト数）',
+    'secrecy.key': '別の平文に復号される鍵（16進数）',
+    'secrecy.decoded': 'その鍵で復号した結果',
+    'secrecy.length': 'バイト数をそろえてください（暗号文 {n} バイト、入力 {m} バイト）',
+    'secrecy.summary': '本物の鍵と、いま作った鍵は、どちらも同じようにランダムに見えます。暗号文だけを見ている人には、どちらが本物か区別できません。',
+    'secrecy.hint': '「撤退せよ!!」も「ATTACK AT DAWN」と同じ14バイトです。下のボタンで別の平文に入れて試せます。',
+    'secrecy.japanese': '日本語の例を入力',
+    'tamper.title': '✂️ 実験6: 改ざん（鍵なしで中身を書き換える）',
+    'tamper.intro': 'ワンタイムパッドは中身を隠しますが、書き換えは防ぎません。攻撃者は文の形を知っていれば、鍵を知らなくても暗号文のビットを反転して意味を変えられます。',
+    'tamper.sender': '送信者',
+    'tamper.plain': '平文（表示できる ASCII、64文字まで）',
+    'tamper.secret': '鍵は送信者と受信者だけが知っています。攻撃者の計算には使いません。',
+    'tamper.key': '鍵を見る',
+    'tamper.attacker': '攻撃者',
+    'tamper.known': '知っている平文（ASCII）',
+    'tamper.target': '書き換え後（同じ長さの ASCII）',
+    'tamper.flip': '✂️ 暗号文を書き換える',
+    'tamper.changed': '書き換えた暗号文 C′（16進数）',
+    'tamper.delta': '差分 C⊕C′（下線のバイトが変化）',
+    'tamper.changedByte': '{n}バイト目が変化',
+    'tamper.receiver': '受信者（本物の鍵で復号）',
+    'tamper.lengthMismatch': '知っている平文と書き換え後の長さをそろえてください。',
+    'tamper.outOfRange': '指定した位置からの断片が暗号文の範囲外です。',
+    'tamper.summary': '改ざんを見抜くには、暗号化とは別に改ざん検知の仕組み（メッセージ認証コードや AES-GCM などの認証付き暗号）が必要です。',
     'advanced.ascii': '入力は空にせず、表示できる ASCII 文字だけを指定の長さ以内で入れてください。',
     'crib.title': '🧩 実験4: クリブ・ドラッグ（同じ鍵を2回使うと読める）',
     'crib.intro': '同じ鍵で暗号化した2つの暗号文を XOR すると鍵が消え、平文どうしの XOR が残ります。ありそうな語（クリブ）を当てると、もう一方の平文が少しずつ読めます。',
@@ -393,6 +423,41 @@ const i18n = (() => {
     "export.note": "※ 鍵が真にランダムで、平文と同じ長さで、一度しか使わず、秘密に保たれるときに限り、暗号文から平文の情報は得られません（完全秘匿性）。このファイルには鍵が含まれるため、教材としての記録です。"
   };
   const en = {
+    'advanced.utf8': 'Enter nonempty UTF-8 text of at most 64 bytes, without control characters.',
+    'advanced.encrypt': '🔑 Generate Key and Encrypt',
+    'advanced.cipher': 'Ciphertext C (hexadecimal)',
+    'secrecy.title': '🎭 Experiment 5: Perfect Secrecy (Any Plaintext Is Possible)',
+    'secrecy.intro': 'If a key is truly random, as long as the plaintext, used once, and kept secret, ciphertext alone cannot narrow down the plaintext. ' +
+      'Every plaintext of the same byte length has a key that decrypts to it.',
+    'secrecy.plain': 'Plaintext (UTF-8, up to 64 bytes)',
+    'secrecy.alternate': 'Alternative plaintext (same byte length)',
+    'secrecy.key': 'Key for the alternative plaintext (hexadecimal)',
+    'secrecy.decoded': 'Decrypted with that key',
+    'secrecy.length': 'Match the byte lengths (ciphertext: {n} bytes, input: {m} bytes).',
+    'secrecy.summary': 'The real key and the key just constructed both look equally random. ' +
+      'Someone who sees only the ciphertext cannot distinguish which is real.',
+    'secrecy.hint': 'The Japanese example uses four Japanese characters followed by !!: 14 UTF-8 bytes, ' +
+      'just like ATTACK AT DAWN. Use the button below to try it as the alternative plaintext.',
+    'secrecy.japanese': 'Enter the Japanese Example',
+    'tamper.title': '✂️ Experiment 6: Tampering (Rewrite without the Key)',
+    'tamper.intro': 'A one-time pad hides content but does not prevent changes. ' +
+      'If an attacker knows the message format, they can flip ciphertext bits to change its meaning without the key.',
+    'tamper.sender': 'Sender',
+    'tamper.plain': 'Plaintext (printable ASCII, up to 64 characters)',
+    'tamper.secret': 'Only the sender and receiver know the key. It is not used in the attacker’s calculation.',
+    'tamper.key': 'Show Key',
+    'tamper.attacker': 'Attacker',
+    'tamper.known': 'Known plaintext (ASCII)',
+    'tamper.target': 'Replacement (ASCII, same length)',
+    'tamper.flip': '✂️ Rewrite Ciphertext',
+    'tamper.changed': 'Modified ciphertext C′ (hexadecimal)',
+    'tamper.delta': 'Difference C⊕C′ (changed bytes are underlined)',
+    'tamper.changedByte': 'Byte {n} changed',
+    'tamper.receiver': 'Receiver (decrypted with the real key)',
+    'tamper.lengthMismatch': 'The known plaintext and replacement must have the same length.',
+    'tamper.outOfRange': 'The fragment at this position is outside the ciphertext range.',
+    'tamper.summary': 'Detecting tampering requires integrity protection separate from encryption, ' +
+      'such as a message authentication code or authenticated encryption like AES-GCM.',
     'advanced.ascii': 'Enter nonempty printable ASCII text within the stated length limit.',
     'crib.title': '🧩 Experiment 4: Crib Dragging (Reusing a Key Reveals Text)',
     'crib.intro': 'XOR two ciphertexts encrypted with the same key: the key cancels, leaving the XOR of their plaintexts. ' +
@@ -850,7 +915,7 @@ const i18n = (() => {
     updateToggleButton();
     updateXORDemo();
     updateGateConstruction();
-    renderCrib();
+    renderAdditionalExperiments();
   }
 
   function init() {

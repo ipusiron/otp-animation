@@ -959,6 +959,63 @@
           </div>
         </div>
 
+        <div class="experiment-section" id="experiment5">
+          <div class="experiment-header accordion-header" data-experiment="5">
+            <h3><span data-i18n="secrecy.title"></span><span class="accordion-icon">▼</span></h3>
+          </div>
+          <div class="experiment-content advanced-lab" id="experiment5-content">
+            <p data-i18n="secrecy.intro"></p>
+            <label for="secrecyPlain" data-i18n="secrecy.plain"></label>
+            <input type="text" id="secrecyPlain" value="ATTACK AT DAWN">
+            <button type="button" id="secrecyEncrypt" class="demo-button" data-i18n="advanced.encrypt"></button>
+            <dl class="lab-hex"><dt data-i18n="advanced.cipher"></dt><dd id="secrecyCipher"></dd></dl>
+            <label for="secrecyAlternate" data-i18n="secrecy.alternate"></label>
+            <input type="text" id="secrecyAlternate" value="RETREAT AT SIX">
+            <p id="secrecyError" class="lab-error" role="alert"></p>
+            <dl class="lab-hex">
+              <dt data-i18n="secrecy.key"></dt><dd id="secrecyKey"></dd>
+              <dt data-i18n="secrecy.decoded"></dt><dd id="secrecyDecoded" role="status"></dd>
+            </dl>
+            <p data-i18n="secrecy.summary"></p>
+            <details><summary data-i18n="crib.hints"></summary>
+              <p data-i18n="secrecy.hint"></p>
+              <button type="button" id="secrecyJapanese" data-i18n="secrecy.japanese"></button>
+            </details>
+          </div>
+        </div>
+
+        <div class="experiment-section" id="experiment6">
+          <div class="experiment-header accordion-header" data-experiment="6">
+            <h3><span data-i18n="tamper.title"></span><span class="accordion-icon">▼</span></h3>
+          </div>
+          <div class="experiment-content advanced-lab" id="experiment6-content">
+            <p data-i18n="tamper.intro"></p>
+            <h4 data-i18n="tamper.sender"></h4>
+            <label for="tamperPlain" data-i18n="tamper.plain"></label>
+            <input type="text" id="tamperPlain" value="PAY 100 YEN TO BOB" maxlength="64">
+            <button type="button" id="tamperEncrypt" class="demo-button" data-i18n="advanced.encrypt"></button>
+            <dl class="lab-hex"><dt data-i18n="advanced.cipher"></dt><dd id="tamperCipher"></dd></dl>
+            <p data-i18n="tamper.secret"></p>
+            <details id="tamperKeyDetails"><summary data-i18n="tamper.key"></summary><pre class="lab-bytes" id="tamperKey"></pre></details>
+            <h4 data-i18n="tamper.attacker"></h4>
+            <label for="tamperPosition" data-i18n="crib.position"></label>
+            <input type="number" id="tamperPosition" value="5" min="1" max="64" step="1">
+            <label for="tamperKnown" data-i18n="tamper.known"></label>
+            <input type="text" id="tamperKnown" value="100" maxlength="64">
+            <label for="tamperTarget" data-i18n="tamper.target"></label>
+            <input type="text" id="tamperTarget" value="900" maxlength="64">
+            <button type="button" id="tamperFlip" class="demo-button" data-i18n="tamper.flip" disabled></button>
+            <p id="tamperError" class="lab-error" role="alert"></p>
+            <dl class="lab-hex">
+              <dt data-i18n="tamper.changed"></dt><dd id="tamperChanged"></dd>
+              <dt data-i18n="tamper.delta"></dt><dd id="tamperDelta"></dd>
+            </dl>
+            <h4 data-i18n="tamper.receiver"></h4>
+            <pre class="lab-bytes" id="tamperDecoded" role="status"></pre>
+            <p data-i18n="tamper.summary"></p>
+          </div>
+        </div>
+
         <div class="lab-conclusion">
           <h3 data-i18n="ui.183">🎓 実験のまとめ</h3>
           <div class="conclusion-points">

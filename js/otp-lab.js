@@ -419,7 +419,7 @@ function toggleAccordion(experimentNumber) {
 
 // すべてのアコーディオンを設定
 function setupAccordion() {
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 6; i++) {
     const header = document.querySelector(`.accordion-header[data-experiment="${i}"]`);
     if (header) {
       header.setAttribute('role', 'button');
@@ -449,6 +449,7 @@ function setupOTPLabHandlers() {
   // アコーディオン機能を設定
   setupAccordion();
   setupCribExperiment();
+  setupAdditionalExperiments();
   
   // 実験1: ゲート構成シミュレーター
   const gateInputA = document.getElementById('gateInputA');
@@ -644,4 +645,127 @@ function setupCribExperiment() {
   labElement('cribAnswer1').textContent = OtpCore.CRIB_SAMPLE.p1;
   labElement('cribAnswer2').textContent = OtpCore.CRIB_SAMPLE.p2;
   renderCrib();
+}
+
+const secrecyState = { cipher: null, key: null, alternateKey: null, decoded: '', error: '', parameters: {} };
+const tamperState = { cipher: null, key: null, changed: null, decoded: '', error: '' };
+
+function renderAdditionalExperiments() {
+  renderCrib();
+  labElement('secrecyCipher').textContent = secrecyState.cipher ? OtpCore.toHex(secrecyState.cipher) : '';
+  labElement('secrecyKey').textContent = secrecyState.alternateKey ? OtpCore.toHex(secrecyState.alternateKey) : '';
+  labElement('secrecyDecoded').textContent = secrecyState.decoded;
+  labElement('secrecyError').textContent = secrecyState.error ? i18n.t(secrecyState.error, secrecyState.parameters) : '';
+  labElement('tamperCipher').textContent = tamperState.cipher ? OtpCore.toHex(tamperState.cipher) : '';
+  labElement('tamperKey').textContent = tamperState.key ? OtpCore.toHex(tamperState.key) : '';
+  labElement('tamperChanged').textContent = tamperState.changed ? OtpCore.toHex(tamperState.changed) : '';
+  labElement('tamperDecoded').textContent = tamperState.decoded;
+  labElement('tamperError').textContent = tamperState.error ? i18n.t(tamperState.error) : '';
+  labElement('tamperFlip').disabled = !tamperState.cipher;
+  const deltaElement = labElement('tamperDelta');
+  deltaElement.replaceChildren();
+  if (tamperState.changed) {
+    const delta = OtpCore.xorBytes(tamperState.cipher, tamperState.changed);
+    delta.forEach((byte, index) => {
+      const span = document.createElement('span');
+      span.textContent = OtpCore.toHex([byte]);
+      if (byte) {
+        span.className = 'lab-changed';
+        span.title = i18n.t('tamper.changedByte', { n: index + 1 });
+      }
+      deltaElement.append(span, document.createTextNode(index < delta.length - 1 ? ' ' : ''));
+    });
+  }
+}
+
+function resetSecrecy() {
+  Object.assign(secrecyState, { cipher: null, key: null, alternateKey: null, decoded: '', error: '', parameters: {} });
+  renderAdditionalExperiments();
+}
+
+function deriveAlternateKey() {
+  Object.assign(secrecyState, { alternateKey: null, decoded: '', error: '', parameters: {} });
+  if (secrecyState.cipher) {
+    const alternate = labElement('secrecyAlternate').value;
+    const bytes = OtpCore.encodeText(alternate);
+    if (bytes.length !== secrecyState.cipher.length) {
+      secrecyState.error = 'secrecy.length';
+      secrecyState.parameters = { n: secrecyState.cipher.length, m: bytes.length };
+    } else {
+      const validation = OtpCore.validateText(alternate);
+      if (!validation.ok) secrecyState.error = 'advanced.utf8';
+      else {
+        secrecyState.alternateKey = OtpCore.forgeKey(secrecyState.cipher, alternate);
+        secrecyState.decoded = OtpCore.decodeBytes(OtpCore.xorBytes(secrecyState.cipher, secrecyState.alternateKey)).text;
+      }
+    }
+  }
+  renderAdditionalExperiments();
+}
+
+function encryptSecrecy() {
+  resetSecrecy();
+  const text = labElement('secrecyPlain').value;
+  if (!OtpCore.validateText(text).ok) {
+    secrecyState.error = 'advanced.utf8';
+    renderAdditionalExperiments();
+    return;
+  }
+  const bytes = OtpCore.encodeText(text);
+  secrecyState.key = OtpCore.randomBytes(bytes.length);
+  secrecyState.cipher = OtpCore.xorBytes(bytes, secrecyState.key);
+  deriveAlternateKey();
+}
+
+function resetTamper() {
+  Object.assign(tamperState, { cipher: null, key: null, changed: null, decoded: '', error: '' });
+  labElement('tamperKeyDetails').open = false;
+  renderAdditionalExperiments();
+}
+
+function encryptTamper() {
+  resetTamper();
+  try {
+    const bytes = labASCII(labElement('tamperPlain').value, 64);
+    tamperState.key = OtpCore.randomBytes(bytes.length);
+    tamperState.cipher = OtpCore.xorBytes(bytes, tamperState.key);
+  } catch (error) { tamperState.error = error.message; }
+  renderAdditionalExperiments();
+}
+
+function flipCiphertext() {
+  Object.assign(tamperState, { changed: null, decoded: '', error: '' });
+  try {
+    const known = labElement('tamperKnown').value, target = labElement('tamperTarget').value;
+    labASCII(known, 64);
+    labASCII(target, 64);
+    const position = Number(labElement('tamperPosition').value);
+    if (!Number.isInteger(position) || position < 1) throw new Error('outOfRange');
+    tamperState.changed = OtpCore.flip(tamperState.cipher, position - 1, known, target);
+    tamperState.decoded = OtpCore.decodeBytes(OtpCore.xorBytes(tamperState.changed, tamperState.key)).text;
+  } catch (error) {
+    tamperState.error = error.message.startsWith('advanced.') ? error.message : 'tamper.' + error.message;
+  }
+  renderAdditionalExperiments();
+}
+
+function setupAdditionalExperiments() {
+  labElement('secrecyEncrypt').addEventListener('click', encryptSecrecy);
+  labElement('secrecyPlain').addEventListener('input', resetSecrecy);
+  labElement('secrecyAlternate').addEventListener('input', deriveAlternateKey);
+  labElement('secrecyJapanese').addEventListener('click', () => {
+    // UTF-8 input example, not a translatable UI label.
+    labElement('secrecyAlternate').value = String.fromCodePoint(0x64a4, 0x9000, 0x305b, 0x3088, 0x21, 0x21);
+    deriveAlternateKey();
+  });
+  labElement('tamperEncrypt').addEventListener('click', encryptTamper);
+  labElement('tamperPlain').addEventListener('input', resetTamper);
+  labElement('tamperFlip').addEventListener('click', flipCiphertext);
+  for (const id of ['tamperKnown', 'tamperTarget', 'tamperPosition']) {
+    labElement(id).addEventListener('input', () => {
+      Object.assign(tamperState, { changed: null, decoded: '', error: '' });
+      renderAdditionalExperiments();
+    });
+  }
+  renderAdditionalExperiments();
 }

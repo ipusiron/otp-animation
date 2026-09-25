@@ -2880,3 +2880,7 @@ footer a {
 .crib-table td:nth-child(2) { white-space: pre; font-family: monospace; }
 .lab-error, .lab-conflict { color: var(--error-ink); }
 .lab-conflict { text-decoration: underline wavy; font-weight: bold; }
+.lab-changed { color: var(--error-ink); font-weight: bold; text-decoration: underline; text-decoration-thickness: 3px; }
+.advanced-lab input { color: var(--text-ink); background: var(--surface-bg); border: 1px solid var(--muted); padding: 0.5rem; }
+.advanced-lab button:not(.demo-button) { color: var(--text-ink); background: var(--surface-bg); border: 1px solid var(--muted); }
+.advanced-lab button:disabled { opacity: 0.6; cursor: default; }
