@@ -907,6 +907,58 @@
           </div>
         </div>
 
+        <div class="experiment-section" id="experiment4">
+          <div class="experiment-header accordion-header" data-experiment="4">
+            <h3><span data-i18n="crib.title">🧩 実験4: クリブ・ドラッグ（同じ鍵を2回使うと読める）</span><span class="accordion-icon">▼</span></h3>
+          </div>
+          <div class="experiment-content advanced-lab" id="experiment4-content">
+            <p data-i18n="crib.intro"></p>
+            <p data-i18n="crib.history"></p>
+            <label class="lab-check"><input type="checkbox" id="cribCustom"><span data-i18n="crib.custom"></span></label>
+            <div id="cribCustomInputs" hidden>
+              <label for="cribPlain1" data-i18n="crib.plain1"></label>
+              <input type="text" id="cribPlain1" maxlength="64">
+              <label for="cribPlain2" data-i18n="crib.plain2"></label>
+              <input type="text" id="cribPlain2" maxlength="64">
+            </div>
+            <button type="button" id="cribEncrypt" class="demo-button" data-i18n="crib.encrypt"></button>
+            <p id="cribLength" role="status"></p>
+            <dl class="lab-hex">
+              <dt>C₁</dt><dd id="cribC1"></dd>
+              <dt>C₂</dt><dd id="cribC2"></dd>
+              <dt>C₁ ⊕ C₂</dt><dd id="cribX"></dd>
+            </dl>
+            <p data-i18n="crib.cancel"></p>
+            <label for="cribInput" data-i18n="crib.input"></label>
+            <input type="text" id="cribInput" value=" THE " maxlength="20">
+            <button type="button" id="cribSearch" class="demo-button" data-i18n="crib.search" disabled></button>
+            <p id="cribError" class="lab-error" role="alert"></p>
+            <label class="lab-check"><input type="checkbox" id="cribReadable" checked><span data-i18n="crib.readableOnly"></span></label>
+            <div class="table-scroll" tabindex="0" role="region" data-i18n-aria-label="crib.candidates">
+              <table class="crib-table">
+                <thead><tr>
+                  <th scope="col" data-i18n="crib.position"></th><th scope="col" data-i18n="crib.fragment"></th>
+                  <th scope="col" data-i18n="crib.readable"></th><th scope="col" data-i18n="crib.placement"></th>
+                </tr></thead>
+                <tbody id="cribRows"></tbody>
+              </table>
+            </div>
+            <h4 data-i18n="crib.assembly"></h4>
+            <p data-i18n="crib.plain1"></p><pre class="lab-bytes" id="cribAssembly1"></pre>
+            <p data-i18n="crib.plain2"></p><pre class="lab-bytes" id="cribAssembly2"></pre>
+            <p id="cribKnown" role="status"></p><p id="cribConflict" class="lab-error" role="status"></p>
+            <p id="cribComplete" role="status"></p>
+            <button type="button" id="cribUndo" data-i18n="crib.undo" disabled></button>
+            <button type="button" id="cribClear" data-i18n="crib.clear" disabled></button>
+            <details id="cribAnswers"><summary data-i18n="crib.answers"></summary>
+              <pre class="lab-bytes" id="cribAnswer1"></pre><pre class="lab-bytes" id="cribAnswer2"></pre>
+            </details>
+            <details><summary data-i18n="crib.hints"></summary><ol>
+              <li data-i18n="crib.hint1"></li><li data-i18n="crib.hint2"></li><li data-i18n="crib.hint3"></li>
+            </ol></details>
+          </div>
+        </div>
+
         <div class="lab-conclusion">
           <h3 data-i18n="ui.183">🎓 実験のまとめ</h3>
           <div class="conclusion-points">

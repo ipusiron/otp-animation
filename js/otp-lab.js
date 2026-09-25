@@ -419,7 +419,7 @@ function toggleAccordion(experimentNumber) {
 
 // すべてのアコーディオンを設定
 function setupAccordion() {
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     const header = document.querySelector(`.accordion-header[data-experiment="${i}"]`);
     if (header) {
       header.setAttribute('role', 'button');
@@ -448,6 +448,7 @@ function setupAccordion() {
 function setupOTPLabHandlers() {
   // アコーディオン機能を設定
   setupAccordion();
+  setupCribExperiment();
   
   // 実験1: ゲート構成シミュレーター
   const gateInputA = document.getElementById('gateInputA');
@@ -523,4 +524,124 @@ function validateLabText(text) {
     return bytes.length !== 1 || bytes[0] < 0x20 || bytes[0] > 0x7e;
   }) || null;
   return { bytes: invalidChar ? [] : OtpCore.encodeText(text), invalidChar };
+}
+
+const cribState = { x: null, placements: [], candidates: [], searched: '', sample: true, error: '' };
+const labElement = id => document.getElementById(id);
+
+function labASCII(value, maximum) {
+  if (!value.length || value.length > maximum || validateLabText(value).invalidChar) {
+    throw new Error('advanced.ascii');
+  }
+  return OtpCore.encodeText(value);
+}
+
+function resetCrib() {
+  Object.assign(cribState, { x: null, placements: [], candidates: [], searched: '', error: '' });
+  for (const id of ['cribC1', 'cribC2', 'cribX', 'cribLength']) labElement(id).textContent = '';
+  renderCrib();
+}
+
+function encryptCrib() {
+  resetCrib();
+  try {
+    cribState.sample = !labElement('cribCustom').checked;
+    const p1 = labASCII(cribState.sample ? OtpCore.CRIB_SAMPLE.p1 : labElement('cribPlain1').value, 64);
+    const p2 = labASCII(cribState.sample ? OtpCore.CRIB_SAMPLE.p2 : labElement('cribPlain2').value, 64);
+    const length = Math.min(p1.length, p2.length);
+    const key = OtpCore.randomBytes(length);
+    const c1 = OtpCore.xorBytes(p1.slice(0, length), key);
+    const c2 = OtpCore.xorBytes(p2.slice(0, length), key);
+    cribState.x = OtpCore.xorBytes(c1, c2);
+    for (const [id, bytes] of [['cribC1', c1], ['cribC2', c2], ['cribX', cribState.x]]) {
+      labElement(id).textContent = OtpCore.toHex(bytes);
+    }
+    if (p1.length !== p2.length) {
+      i18n.assign(labElement('cribLength'), 'textContent', i18n.t('crib.shorter', { n: length }));
+    }
+  } catch (error) { cribState.error = error.message; }
+  renderCrib();
+}
+
+function searchCrib() {
+  cribState.error = '';
+  cribState.candidates = [];
+  try {
+    const crib = labElement('cribInput').value;
+    labASCII(crib, 20);
+    cribState.searched = crib;
+    cribState.candidates = OtpCore.cribDrag(cribState.x, crib);
+  } catch (error) { cribState.error = error.message; }
+  renderCrib();
+}
+
+function renderCrib() {
+  labElement('cribSearch').disabled = !cribState.x;
+  labElement('cribUndo').disabled = !cribState.placements.length;
+  labElement('cribClear').disabled = !cribState.placements.length;
+  labElement('cribError').textContent = cribState.error ? i18n.t(cribState.error) : '';
+  const body = labElement('cribRows');
+  body.replaceChildren();
+  for (const candidate of cribState.candidates) {
+    if (labElement('cribReadable').checked && !candidate.readable) continue;
+    const row = document.createElement('tr');
+    row.dataset.offset = candidate.offset;
+    for (const text of [candidate.offset + 1, candidate.text.replaceAll(' ', '␣'), candidate.readable ? '✓' : '—']) {
+      const cell = document.createElement('td');
+      cell.textContent = text;
+      row.append(cell);
+    }
+    const actions = document.createElement('td');
+    for (const into of [1, 2]) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.into = into;
+      button.textContent = i18n.t('crib.place', { n: into });
+      button.addEventListener('click', () => {
+        cribState.placements.push({ offset: candidate.offset, crib: cribState.searched, into });
+        renderCribAssembly();
+      });
+      actions.append(button);
+    }
+    row.append(actions);
+    body.append(row);
+  }
+  renderCribAssembly();
+}
+
+function renderCribAssembly() {
+  const result = cribState.x ? OtpCore.assemble(cribState.x, cribState.placements) : null;
+  labElement('cribUndo').disabled = !cribState.placements.length;
+  labElement('cribClear').disabled = !cribState.placements.length;
+  for (const [id, field] of [['cribAssembly1', 'p1'], ['cribAssembly2', 'p2']]) {
+    const line = labElement(id);
+    line.replaceChildren();
+    if (result) [...result[field]].forEach((character, index) => {
+      const span = document.createElement('span');
+      span.textContent = character;
+      if (result.conflict.includes(index)) span.className = 'lab-conflict';
+      line.append(span);
+    });
+  }
+  labElement('cribKnown').textContent = result ? i18n.t('crib.known', { n: result.known, total: cribState.x.length }) : '';
+  labElement('cribConflict').textContent = result?.conflict.length ? i18n.t('crib.conflict') : '';
+  const complete = result && cribState.sample && result.p1 === OtpCore.CRIB_SAMPLE.p1 && result.p2 === OtpCore.CRIB_SAMPLE.p2;
+  labElement('cribComplete').textContent = complete ? i18n.t('crib.complete') : '';
+}
+
+function setupCribExperiment() {
+  labElement('cribEncrypt').addEventListener('click', encryptCrib);
+  labElement('cribSearch').addEventListener('click', searchCrib);
+  labElement('cribReadable').addEventListener('change', renderCrib);
+  labElement('cribUndo').addEventListener('click', () => { cribState.placements.pop(); renderCribAssembly(); });
+  labElement('cribClear').addEventListener('click', () => { cribState.placements = []; renderCribAssembly(); });
+  labElement('cribCustom').addEventListener('change', () => {
+    labElement('cribCustomInputs').hidden = !labElement('cribCustom').checked;
+    labElement('cribAnswers').hidden = labElement('cribCustom').checked;
+    resetCrib();
+  });
+  for (const id of ['cribPlain1', 'cribPlain2']) labElement(id).addEventListener('input', resetCrib);
+  labElement('cribAnswer1').textContent = OtpCore.CRIB_SAMPLE.p1;
+  labElement('cribAnswer2').textContent = OtpCore.CRIB_SAMPLE.p2;
+  renderCrib();
 }

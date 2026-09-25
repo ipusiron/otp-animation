@@ -3,6 +3,36 @@
 // All user-facing messages live here. Classic script keeps file:// support.
 const i18n = (() => {
   const ja = {
+    'advanced.ascii': '入力は空にせず、表示できる ASCII 文字だけを指定の長さ以内で入れてください。',
+    'crib.title': '🧩 実験4: クリブ・ドラッグ（同じ鍵を2回使うと読める）',
+    'crib.intro': '同じ鍵で暗号化した2つの暗号文を XOR すると鍵が消え、平文どうしの XOR が残ります。ありそうな語（クリブ）を当てると、もう一方の平文が少しずつ読めます。',
+    'crib.history': 'VENONA では、ソ連側の鍵の再利用を手掛かりに解読が進みました。この実験は、語を推測して確かめる考え方を体験するものです。',
+    'crib.custom': '自分の2文で試す',
+    'crib.plain1': '平文1',
+    'crib.plain2': '平文2',
+    'crib.encrypt': '🔀 新しい鍵で暗号化',
+    'crib.shorter': '長さが違うため、短い方の {n} 文字に合わせました。',
+    'crib.cancel': '鍵がなくても計算できます（鍵は相殺されます）。同じ2文なら、鍵を変えても C₁⊕C₂ は同じ値です。',
+    'crib.input': 'クリブ（表示できる ASCII、1〜20文字。前後の空白も含む）',
+    'crib.search': 'すべての位置に当てる',
+    'crib.readableOnly': '読める候補だけ表示',
+    'crib.candidates': 'クリブの候補（表の中を横にスクロールできます）',
+    'crib.position': '位置（1から）',
+    'crib.fragment': 'もう一方の平文の断片（␣は空白）',
+    'crib.readable': '読める印',
+    'crib.placement': 'クリブを置く先',
+    'crib.place': '平文{n}に置く',
+    'crib.assembly': '組み立て（未確定は _）',
+    'crib.known': '分かった文字数: {n}／{total}',
+    'crib.conflict': '置いた語が食い違っています（下線の位置）。',
+    'crib.complete': '2つの平文がそろいました',
+    'crib.undo': '最後の配置を取り消す',
+    'crib.clear': 'すべて消す',
+    'crib.answers': '答えを見る',
+    'crib.hints': 'ヒント',
+    'crib.hint1': 'まず「 THE 」（前後に空白）を当てます。',
+    'crib.hint2': '前後に別の語を当てて確かめます。位置5（0から数えると4）の「PXN. 」は偶然の外れです。',
+    'crib.hint3': '分かった断片の続きを予想します。GATE が見えたら「 GATE AT 」を試してみましょう。',
     "ui.0": "JavaScriptを有効にしてください。",
     "ui.1": "暗号化",
     "ui.2": "復号",
@@ -363,6 +393,37 @@ const i18n = (() => {
     "export.note": "※ 鍵が真にランダムで、平文と同じ長さで、一度しか使わず、秘密に保たれるときに限り、暗号文から平文の情報は得られません（完全秘匿性）。このファイルには鍵が含まれるため、教材としての記録です。"
   };
   const en = {
+    'advanced.ascii': 'Enter nonempty printable ASCII text within the stated length limit.',
+    'crib.title': '🧩 Experiment 4: Crib Dragging (Reusing a Key Reveals Text)',
+    'crib.intro': 'XOR two ciphertexts encrypted with the same key: the key cancels, leaving the XOR of their plaintexts. ' +
+      'Guess likely words (cribs) to reveal fragments of the other plaintext.',
+    'crib.history': 'VENONA exploited Soviet key reuse to help decipher messages. This experiment explores the idea of testing guesses of likely words.',
+    'crib.custom': 'Try my own two messages',
+    'crib.plain1': 'Plaintext 1',
+    'crib.plain2': 'Plaintext 2',
+    'crib.encrypt': '🔀 Encrypt with a New Key',
+    'crib.shorter': 'Different lengths: using the shorter length of {n} characters.',
+    'crib.cancel': 'No key is needed for this calculation: the keys cancel. For the same two messages, C₁⊕C₂ is unchanged even with a new key.',
+    'crib.input': 'Crib (printable ASCII, 1–20 characters, including surrounding spaces)',
+    'crib.search': 'Try Every Position',
+    'crib.readableOnly': 'Show readable candidates only',
+    'crib.candidates': 'Crib candidates (scroll horizontally inside the table)',
+    'crib.position': 'Position (from 1)',
+    'crib.fragment': 'Other plaintext fragment (␣ means space)',
+    'crib.readable': 'Readable',
+    'crib.placement': 'Place the crib into',
+    'crib.place': 'Place in Plaintext {n}',
+    'crib.assembly': 'Assembly (_ means unknown)',
+    'crib.known': 'Known characters: {n}/{total}',
+    'crib.conflict': 'Placed words conflict at the underlined positions.',
+    'crib.complete': 'Both plaintexts are complete',
+    'crib.undo': 'Undo Last Placement',
+    'crib.clear': 'Clear All',
+    'crib.answers': 'Show Answers',
+    'crib.hints': 'Hints',
+    'crib.hint1': 'Start with “ THE ”, including the surrounding spaces.',
+    'crib.hint2': 'Test other words nearby. “PXN. ” at position 5 (zero-based offset 4) is a coincidental false positive.',
+    'crib.hint3': 'Extend a fragment you recognize: after GATE, try “ GATE AT ”.',
     "ui.0": "Please enable JavaScript.",
     "ui.1": "Encryption",
     "ui.2": "Decryption",
@@ -789,6 +850,7 @@ const i18n = (() => {
     updateToggleButton();
     updateXORDemo();
     updateGateConstruction();
+    renderCrib();
   }
 
   function init() {

@@ -11,6 +11,13 @@ const ranges = [[0x3040, 0x30ff], [0x4e00, 0x9fff], [0xff01, 0xff60]];
 const japanese = new RegExp('[' + ranges.map(([a, b]) =>
   String.fromCodePoint(a) + '-' + String.fromCodePoint(b)).join('') + ']');
 
+test('crib experiment has bilingual instructions and outcome messages', () => {
+  for (const key of ['crib.title', 'crib.intro', 'crib.history', 'crib.conflict', 'crib.complete', 'crib.shorter']) {
+    assert.ok(i18n.ja[key]);
+    assert.ok(i18n.en[key]);
+  }
+});
+
 test('Japanese and English dictionaries have identical nonempty keys', () => {
   assert.deepEqual(Object.keys(i18n.ja).sort(), Object.keys(i18n.en).sort());
   for (const dictionary of [i18n.ja, i18n.en]) {

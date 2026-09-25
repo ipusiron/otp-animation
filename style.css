@@ -2865,3 +2865,18 @@ footer a {
   max-width: 100%;
   overflow-x: auto;
 }
+
+.advanced-lab { min-width: 0; color: var(--text-ink); }
+.advanced-lab p { margin: 0.75rem 0; }
+.advanced-lab label { display: block; margin: 0.75rem 0 0.25rem; }
+.advanced-lab input:not([type="checkbox"]) { box-sizing: border-box; width: 100%; max-width: 100%; min-height: 44px; }
+.advanced-lab button, .advanced-lab summary { min-height: 44px; padding: 0.65rem; margin: 0.25rem; cursor: pointer; }
+.advanced-lab .lab-check { display: flex; align-items: center; gap: 0.5rem; }
+.lab-check input { min-width: 44px; min-height: 44px; }
+.lab-hex dd { margin: 0.25rem 0 0.75rem; overflow-wrap: anywhere; font-family: monospace; }
+.lab-bytes { overflow-x: auto; max-width: 100%; padding: 0.5rem 0; font-family: monospace; font-size: 1rem; }
+.crib-table { border-collapse: collapse; width: 100%; min-width: 620px; color: var(--text-ink); }
+.crib-table th, .crib-table td { padding: 0.5rem; border: 1px solid var(--muted); text-align: left; }
+.crib-table td:nth-child(2) { white-space: pre; font-family: monospace; }
+.lab-error, .lab-conflict { color: var(--error-ink); }
+.lab-conflict { text-decoration: underline wavy; font-weight: bold; }
