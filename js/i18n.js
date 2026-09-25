@@ -256,6 +256,12 @@ const i18n = (() => {
     "ui.187": "鍵の再利用は致命的な脆弱性を生み出します。OTPでは絶対に鍵を再利用してはいけません。",
     "ui.188": "🕵️ 実験3の教訓",
     "ui.189": "平文の断片が漏洩すると対応する鍵も漏洩しますが、OTPでは使い捨てなので将来のセキュリティには影響しません。",
+    "lesson.4.title": "🧩 実験4の教訓",
+    "lesson.4.text": "同じ鍵を2回使うと、鍵がなくても推測した語を当てていくだけで2つの平文が読めてしまいます。",
+    "lesson.5.title": "🎭 実験5の教訓",
+    "lesson.5.text": "鍵が真にランダムで一度きりなら、同じバイト数のどの平文もあり得るため、暗号文だけでは平文を絞れません。",
+    "lesson.6.title": "✂️ 実験6の教訓",
+    "lesson.6.text": "OTPは中身を隠しますが改ざんは防ぎません。改ざん検知にはメッセージ認証コードや認証付き暗号が別に必要です。",
     "ui.190": "🔗 GitHubリポジトリはこちら（",
     "ui.191": "）",
     "ui.192": "🔥 OTP Animation ヘルプ",
@@ -693,6 +699,15 @@ const i18n = (() => {
     "ui.188": "🕵️ Lesson from Experiment 3",
     "ui.189": "A leaked plaintext fragment reveals matching key bits, but independent one-time keys protect fu" +
       "ture messages.",
+    "lesson.4.title": "🧩 Lesson from Experiment 4",
+    "lesson.4.text": "Using the same key twice lets an attacker read both plaintexts by sliding guessed words, " +
+      "even without the key.",
+    "lesson.5.title": "🎭 Lesson from Experiment 5",
+    "lesson.5.text": "With a truly random one-time key, any plaintext of the same byte length is possible, " +
+      "so the ciphertext alone cannot narrow it down.",
+    "lesson.6.title": "✂️ Lesson from Experiment 6",
+    "lesson.6.text": "OTP hides the content but does not prevent tampering. Detecting changes needs a separate " +
+      "message authentication code or authenticated encryption.",
     "ui.190": "🔗 GitHub repository (",
     "ui.191": ")",
     "ui.192": "🔥 OTP Animation Help",
