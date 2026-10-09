@@ -219,6 +219,20 @@ Experiment 6 starts with PAY 100 YEN TO BOB. The receiver decrypts every ciphert
 
 The difference for 100→900 is `00 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 00 00`: only byte 5 changes.
 
+## 🎯 Use cases
+
+### Ways of using this tool in particular
+
+- Confirming that reusing a key cancels the key under XOR (one-time pad classes): encrypting two plaintexts with the same key by XOR makes the XOR of the two ciphertexts equal to the XOR of the two plaintexts. XORing the two ciphertexts of HELLO and WORLD under the key ABCDE gives `1F 0A 1E 00 0B`, the same as XORing HELLO and WORLD directly. You can confirm that reusing a key makes the key cancel out
+- Confirming that you can forge a key that decrypts to any plaintext (perfect-secrecy classes): a one-time pad ciphertext can be decrypted to any plaintext of the same length by choosing another key. Forge a key for the ATTACK ciphertext that decrypts to DEFEND, apply it, and DEFEND appears. You can confirm that the ciphertext alone does not fix the content (perfect secrecy) and that this can be used for deniability
+- Confirming that bit-flipping rewrites the content (tampering and malleability classes): even without the key, flipping bits of the ciphertext changes the plaintext at the same position as intended. Flipping the digit position of the `PAY 100 YEN` ciphertext makes it decrypt to `PAY 900 YEN`. You can confirm that XOR hides the content but does not guarantee it was not tampered with (authentication is needed separately)
+
+### General uses
+
+- Learn how a one-time pad and XOR work (perfect secrecy and the danger of key reuse)
+- Experience the cryptanalysis of key reuse (crib dragging) and tampering in exercises
+- Use it as material to explain that encryption and authentication are separate (secrecy versus integrity)
+
 ## 🔒 Security
 
 This is an educational demonstration, not a tool for protecting real data or securely distributing and erasing keys.

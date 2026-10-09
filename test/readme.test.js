@@ -13,7 +13,7 @@ const headings = [
   ['✨ 機能', '✨ Features'], ['📖 使い方', '📖 Usage'],
   ['🔐 ワンタイムパッドとは', '🔐 What Is the One-Time Pad'],
   ['🔬 仕様と既知解答', '🔬 Specification and Known Answers'],
-  ['🔒 セキュリティ', '🔒 Security'], ['📚 参考', '📚 References'],
+  ['🎯 ユースケース', '🎯 Use cases'], ['🔒 セキュリティ', '🔒 Security'], ['📚 参考', '📚 References'],
   ['🧪 テスト', '🧪 Tests'], ['📁 ディレクトリー構造', '📁 Directory Structure'],
   ['💻 動作環境', '💻 Requirements'], ['📄 ライセンス', '📄 License'],
   ['🛠️ このツールについて', '🛠️ About This Tool']
@@ -132,4 +132,25 @@ test('Japanese YAML keeps the original keys, immutable values and block lists', 
   for (const key of ['category_ja', 'category_en', 'tags']) assert.ok(front.includes(`${key}:\n  - `));
   assert.ok(front.includes('  - Classical Cryptography\n  - Modern Cryptography'));
   assert.ok(!read('README.en.md').startsWith('<!--'));
+});
+
+test('ユースケースの「このツールならではの使い方」を otp-core.js で再計算（日英）', () => {
+  const C = require('../js/otp-core.js');
+  const [ja, en] = docs.map(read);
+  const key = C.encodeText('ABCDE');
+  const c1 = C.xorBytes(C.encodeText('HELLO'), key);
+  const c2 = C.xorBytes(C.encodeText('WORLD'), key);
+  assert.equal(C.toHex(C.xorBytes(c1, c2)), C.toHex(C.xorBytes(C.encodeText('HELLO'), C.encodeText('WORLD'))));
+  assert.equal(C.toHex(C.xorBytes(c1, c2)), '1F 0A 1E 00 0B');
+  const k2 = C.randomBytes(6);
+  const ct = C.xorBytes(C.encodeText('ATTACK'), k2);
+  const fake = C.forgeKey(ct, 'DEFEND');
+  assert.equal([...C.xorBytes(ct, fake)].map((b) => String.fromCharCode(b)).join(''), 'DEFEND');
+  const k3 = C.randomBytes('PAY 100 YEN'.length);
+  const pay = C.xorBytes(C.encodeText('PAY 100 YEN'), k3);
+  const forged = C.flip(pay, 4, '1', '9');
+  assert.equal([...C.xorBytes(forged, k3)].map((b) => String.fromCharCode(b)).join(''), 'PAY 900 YEN');
+  for (const md of [ja, en]) {
+    assert.ok(md.includes('1F 0A 1E 00 0B') && md.includes('DEFEND') && md.includes('PAY 900 YEN'));
+  }
 });
